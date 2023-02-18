@@ -1,0 +1,14 @@
+-classpath 'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\build\\classes\\java\\main;C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\build\\resources\\main'
+-d 'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\build\\docs\\javadoc'
+-doctitle 'Lab5 1.0-SNAPSHOT API'
+-notimestamp 
+-quiet 
+-windowtitle 'Lab5 1.0-SNAPSHOT API'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\App.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\Color.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\Coordinates.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\Difficulty.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\exceptions\\InvalidFieldY.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\exceptions\\NullX.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\LabWork.java'
+'C:\\Users\\79170\\IdeaProjects\\Lab-5\\Lab5\\src\\main\\java\\lab5\\Person.java'

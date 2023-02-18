@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"lab5","l":"App"},{"p":"lab5","l":"Color"},{"p":"lab5","l":"Coordinates"},{"p":"lab5","l":"Difficulty"},{"p":"lab5.exceptions","l":"InvalidFieldY"},{"p":"lab5","l":"LabWork"},{"p":"lab5.exceptions","l":"NullX"},{"p":"lab5","l":"Person"}];updateSearchResults();
