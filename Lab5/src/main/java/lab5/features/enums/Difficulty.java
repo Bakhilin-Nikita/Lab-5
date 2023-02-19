@@ -1,4 +1,4 @@
-package lab5;
+package lab5.features.enums;
 
 public enum Difficulty {
     VERY_EASY,

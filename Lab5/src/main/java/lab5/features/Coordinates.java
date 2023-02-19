@@ -1,11 +1,13 @@
-package lab5;
+package lab5.features;
 
-import lab5.exceptions.InvalidFieldY;
-import lab5.exceptions.NullX;
+import lab5.exceptions.*;
 
 public class Coordinates {
     private Integer x; //Поле не может быть null
     private Double y; //Значение поля должно быть больше -184, Поле не может быть null
+
+    public Coordinates() {
+    }
 
     public Coordinates(Integer x, Double y)
             throws NullX, InvalidFieldY {
@@ -36,4 +38,5 @@ public class Coordinates {
     public Double getY() {
         return y;
     }
+
 }

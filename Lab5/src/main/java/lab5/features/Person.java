@@ -1,17 +1,19 @@
-package lab5;
+package lab5.features;
 
-import java.time.ZonedDateTime;
+import lab5.features.enums.Color;
+
+import java.time.LocalDate;
 
 public class Person {
     private String name; //Поле не может быть null, Строка не может быть пустой
-    private java.time.ZonedDateTime birthday; //Поле не может быть null
+    private LocalDate birthday; //Поле не может быть null
     private float height; //Значение поля должно быть больше 0
     private Color eyeColor; //Поле не может быть null
 
-    public Person(String name, ZonedDateTime birthday, float height, Color eyeColor){
+    public Person(String name, LocalDate birthday, Color eyeColor, double height) {
         this.name = name;
         this.birthday = birthday;
-        this.height = height;
+        this.height = (float) height;
         this.eyeColor = eyeColor;
     }
 
@@ -23,11 +25,11 @@ public class Person {
         return name;
     }
 
-    public void setBirthday(ZonedDateTime birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
-    public ZonedDateTime getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 

@@ -1,5 +1,9 @@
 package lab5;
 
+import lab5.features.Coordinates;
+import lab5.features.Person;
+import lab5.features.enums.Difficulty;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -10,20 +14,22 @@ public class LabWork {
 
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
-    private Coordinates coordinates; //Поле не может быть null
-    private java.time.ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private Coordinates coordinates = new Coordinates(); //Поле не может быть null
+    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private int minimalPoint; //Значение поля должно быть больше 0
     private int tunedInWorks;
     private Difficulty difficulty; //Поле может быть null
     private Person author; //Поле не может быть null
 
 
-    public LabWork(String name, Coordinates coordinates, int minimalPoint, int tunedInWorks, Person author) {
+    public LabWork(int id, String name, Coordinates coordinates, int minimalPoint, int tunedInWorks, Person author, Difficulty difficulty) {
+        this.id = id;
         this.name = name;
         this.coordinates = coordinates;
         this.minimalPoint = minimalPoint;
         this.author = author;
         this.tunedInWorks = tunedInWorks; // I do not understand what is it
+        this.difficulty = difficulty;
 
         // set up automatically
         this.creationDate = ZonedDateTime.now();
@@ -84,4 +90,5 @@ public class LabWork {
     public int getTunedInWorks() {
         return this.tunedInWorks;
     }
+
 }
