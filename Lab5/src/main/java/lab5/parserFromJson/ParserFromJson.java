@@ -10,21 +10,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 
-public class parserFromJson {
+public class ParserFromJson {
     public Root parse() {
         Root root = new Root();
         JSONParser parser = new JSONParser();
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream("C:\\Users\\79170\\IdeaProjects\\L\\notes.json"))) {
 
-        try (FileReader reader = new FileReader("data.json")) {
-
-            JSONObject rootJsonObject = (JSONObject) parser.parse(reader);
-            JSONArray labsJsonArray = (JSONArray) rootJsonObject.get("labs");
+            JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
             HashSet<LabWork> labWorks = new HashSet<>();
 
@@ -51,20 +48,21 @@ public class parserFromJson {
                 String nameAuthor = (String) personJsonObject.get("name");
                 String color = (String) personJsonObject.get("eyeColor");
                 double height = (Double) personJsonObject.get("height");
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
-                String dataBirthday = (String) personJsonObject.get("birthday");
+                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+                // String dataBirthday = (String) personJsonObject.get("birthday");
                 //convert string to LocalDate
-                LocalDate birthday = LocalDate.parse(dataBirthday, formatter);
+                // LocalDate birthday = LocalDate.parse(dataBirthday, formatter);
 
-                LabWork labWork = new LabWork((int) id,
-                        name, new Coordinates((int) x, y), (int) minimalPoint,
-                        (int) tunedInWorks, new Person(nameAuthor, birthday,
-                        Color.valueOf(color), height), Difficulty.valueOf(difficulty));
+                String dataBirthday = (String) personJsonObject.get("birthday");
+
+                LabWork labWork = new LabWork((int) id, name, (int) minimalPoint, (int) tunedInWorks, Difficulty.valueOf(difficulty), new Coordinates((int) x, y), new Person(nameAuthor, Color.valueOf(color), height, dataBirthday));
 
                 labWorks.add(labWork);
+
             }
 
             root.setLabs(labWorks);
+
             return root;
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);

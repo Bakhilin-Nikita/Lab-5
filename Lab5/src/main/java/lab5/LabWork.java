@@ -4,8 +4,6 @@ import lab5.features.Coordinates;
 import lab5.features.Person;
 import lab5.features.enums.Difficulty;
 
-import java.time.ZonedDateTime;
-
 /**
  * The LabWork is main object for console App
  */
@@ -15,14 +13,14 @@ public class LabWork {
     private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates = new Coordinates(); //Поле не может быть null
-    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    // private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private int minimalPoint; //Значение поля должно быть больше 0
     private int tunedInWorks;
     private Difficulty difficulty; //Поле может быть null
     private Person author; //Поле не может быть null
 
 
-    public LabWork(int id, String name, Coordinates coordinates, int minimalPoint, int tunedInWorks, Person author, Difficulty difficulty) {
+    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -32,7 +30,7 @@ public class LabWork {
         this.difficulty = difficulty;
 
         // set up automatically
-        this.creationDate = ZonedDateTime.now();
+        //this.creationDate = ZonedDateTime.now();
     }
 
     public void setDifficulty(Difficulty diff) {

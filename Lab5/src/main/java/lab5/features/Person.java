@@ -4,15 +4,16 @@ import lab5.features.enums.Color;
 
 import java.time.LocalDate;
 
+
 public class Person {
     private String name; //Поле не может быть null, Строка не может быть пустой
-    private LocalDate birthday; //Поле не может быть null
+    private String birthday; //Поле не может быть null
     private float height; //Значение поля должно быть больше 0
     private Color eyeColor; //Поле не может быть null
 
-    public Person(String name, LocalDate birthday, Color eyeColor, double height) {
-        this.name = name;
+    public Person(String name, Color eyeColor, double height, String birthday) {
         this.birthday = birthday;
+        this.name = name;
         this.height = (float) height;
         this.eyeColor = eyeColor;
     }
@@ -26,10 +27,10 @@ public class Person {
     }
 
     public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
+        //this.birthday = birthday;
     }
 
-    public LocalDate getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
