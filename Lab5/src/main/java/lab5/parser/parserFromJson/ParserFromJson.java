@@ -1,4 +1,4 @@
-package lab5.parserFromJson;
+package lab5.parser.parserFromJson;
 
 import lab5.LabWork;
 import lab5.features.Coordinates;
@@ -10,9 +10,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
 
 public class ParserFromJson {
@@ -24,7 +22,6 @@ public class ParserFromJson {
             JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
             HashSet<LabWork> labWorks = new HashSet<>();
-
             for (Object lab : labsJsonArray) {
                 JSONObject labJsonObject = (JSONObject) lab;
 
@@ -48,11 +45,6 @@ public class ParserFromJson {
                 String nameAuthor = (String) personJsonObject.get("name");
                 String color = (String) personJsonObject.get("eyeColor");
                 double height = (Double) personJsonObject.get("height");
-                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
-                // String dataBirthday = (String) personJsonObject.get("birthday");
-                //convert string to LocalDate
-                // LocalDate birthday = LocalDate.parse(dataBirthday, formatter);
-
                 String dataBirthday = (String) personJsonObject.get("birthday");
 
                 LabWork labWork = new LabWork((int) id, name, (int) minimalPoint, (int) tunedInWorks, Difficulty.valueOf(difficulty), new Coordinates((int) x, y), new Person(nameAuthor, Color.valueOf(color), height, dataBirthday));
@@ -68,4 +60,20 @@ public class ParserFromJson {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean checkOnEmpty() throws FileNotFoundException {
+        File file = new File("notes.json");
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        try {
+            if (br.readLine() == null)
+                return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
+    }
+
 }

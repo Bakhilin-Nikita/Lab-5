@@ -19,6 +19,7 @@ public class LabWork {
     private Difficulty difficulty; //Поле может быть null
     private Person author; //Поле не может быть null
 
+    public LabWork(){}
 
     public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.id = id;

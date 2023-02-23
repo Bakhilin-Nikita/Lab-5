@@ -1,4 +1,4 @@
-package lab5.parserFromJson;
+package lab5.parser.parserFromJson;
 
 import lab5.LabWork;
 

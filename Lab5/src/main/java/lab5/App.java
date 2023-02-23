@@ -1,12 +1,11 @@
 package lab5;
 
-import com.google.gson.Gson;
-import lab5.exceptions.InvalidFieldY;
-import lab5.exceptions.NullX;
-import lab5.parserFromJson.ParserFromJson;
-import lab5.parserFromJson.Root;
-import lab5.parserToJson.ParserToJson;
+import lab5.command.addLab.AddLab;
+import lab5.parser.parserFromJson.ParserFromJson;
+import lab5.parser.parserFromJson.Root;
+import lab5.parser.parserToJson.ParserToJson;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 /**
@@ -15,28 +14,20 @@ import java.util.HashSet;
 
 public class App {
 
-    public static void main(String[] args) throws NullX, InvalidFieldY {
+    public static void main(String[] args) throws IOException {
 
-        HashSet<LabWork> labs = new HashSet<>();
-
-        //to Json
+        HashSet<LabWork> labWorks = new HashSet<>();
         ParserToJson inJson = new ParserToJson();
-        LabWork lab1 = inJson.addToList(12, "Rim", 123, 12, "EASY", 11, 12.3, "Nikita", "GREEN", 224, "23-05-2004");
-        LabWork lab2 = inJson.addToList(1122, "Rim21", 123, 12, "EASY", 11, 12.3, "Nikita", "GREEN", 224, "23-05-2004");
-        LabWork lab3 = inJson.addToList(11222, "Ri342m21", 123423, 4312, "EASY", 11, 12.3, "Nikita", "GREEN", 224, "23-05-2004");
-        labs.add(lab1);
-        labs.add(lab2);
-        labs.add(lab3);
-
-        inJson.serialization(labs);
-
-        Gson gson = new Gson();
-        System.out.println(gson.toJson(labs));
         ParserFromJson parser = new ParserFromJson();
-        Root root = parser.parse();
-        parser.parse();
+        if (parser.checkOnEmpty()) {
+            Root root = parser.parse();
+            labWorks = root.getLabs();
+            inJson.serialization(labWorks);
+        }
 
-        HashSet<LabWork> labWorks = root.getLabs();
+        AddLab newLab = new AddLab();
+        newLab.execute();
+        labWorks.add(newLab.getLab());
 
         for (LabWork lab : labWorks) {
             System.out.println("id:" + lab.getId());
@@ -53,5 +44,8 @@ public class App {
             System.out.println("---------------------");
         }
 
+
+        //
+        inJson.serialization(labWorks);
     }
 }

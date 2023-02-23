@@ -1,4 +1,4 @@
-package lab5.parserToJson;
+package lab5.parser.parserToJson;
 
 import com.google.gson.Gson;
 import lab5.LabWork;
@@ -26,7 +26,7 @@ public class ParserToJson {
 
         String result = gson.toJson(labs);
 
-        try (FileOutputStream out = new FileOutputStream("notes.json", true);
+        try (FileOutputStream out = new FileOutputStream("notes.json");
 
              BufferedOutputStream bos = new BufferedOutputStream(out)) {
             // перевод строки в байты
