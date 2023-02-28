@@ -1,4 +1,4 @@
-package lab5;
+package lab5.features;
 
 import lab5.features.Coordinates;
 import lab5.features.Person;

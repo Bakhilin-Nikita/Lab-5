@@ -1,10 +1,11 @@
 package lab5.parser.parserFromJson;
 
-import lab5.LabWork;
+import lab5.features.LabWork;
 import lab5.features.Coordinates;
 import lab5.features.Person;
 import lab5.features.enums.Color;
 import lab5.features.enums.Difficulty;
+import lab5.parser.Root;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

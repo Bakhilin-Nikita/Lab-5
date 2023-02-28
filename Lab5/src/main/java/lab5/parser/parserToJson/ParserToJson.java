@@ -1,7 +1,7 @@
 package lab5.parser.parserToJson;
 
 import com.google.gson.Gson;
-import lab5.LabWork;
+import lab5.features.LabWork;
 import lab5.exceptions.InvalidFieldY;
 import lab5.exceptions.NullX;
 import lab5.features.Coordinates;
@@ -21,7 +21,7 @@ public class ParserToJson {
         return lab;
     }
 
-    public void serialization(HashSet<LabWork> labs){
+    public boolean serialization(HashSet<LabWork> labs){
         Gson gson = new Gson();
 
         String result = gson.toJson(labs);
@@ -33,8 +33,11 @@ public class ParserToJson {
             byte[] buffer = result.getBytes();
             bos.write(buffer, 0, buffer.length);
 
+            return true;
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+
+        return false;
     }
 }

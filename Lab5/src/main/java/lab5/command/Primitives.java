@@ -1,6 +1,6 @@
 package lab5.command;
 
-import lab5.features.enums.Difficulty;
+import lab5.exceptions.ValidityNumber;
 import lab5.phrasesToUser.Phrase;
 
 import java.io.BufferedReader;
