@@ -3,13 +3,14 @@ package lab5;
 // управляет всеми командами этого приложения
 
 import lab5.command.Command;
-import lab5.command.CommandsList;
+import lab5.command.collectionCommands.CommandsList;
 import lab5.command.exit.Exit;
 import lab5.command.help.GetHelpCommand;
 import lab5.features.LabWork;
 import lab5.parser.Root;
 import lab5.parser.parserFromJson.ParserFromJson;
 import lab5.parser.parserToJson.ParserToJson;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -27,7 +28,9 @@ public class Controller {
     private GetHelpCommand help = new GetHelpCommand(); // Экземпляр класса help
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); // поток ввода данных с консоли
 
-    private ArrayList<Command> commandArrayList = CommandsList.getCommands(); // Коллекция содержит в себе все команды
+    private Root root;
+
+    private ArrayList<Command> commandArrayList = new CommandsList().getCommands(); // Коллекция содержит в себе все команды
 
     /**
      * В конструкторе происходит автоматическая проверка json-файла.
@@ -38,7 +41,7 @@ public class Controller {
      */
     public Controller() throws FileNotFoundException {
         if (parserFromJson.checkOnEmpty()) {
-            Root root = parserFromJson.parse();
+            root = parserFromJson.parse();
             labWorks = root.getLabs();
             parserToJson.serialization(labWorks);
         }
@@ -55,7 +58,7 @@ public class Controller {
         boolean flag = false;
         help.execute();
         while (!flag) {
-            Command command = searchCommandInCollection(reader.readLine().trim());
+            Command command = searchCommandInCollection(reformatCmd(reader.readLine()).trim());
             if (command.getClass().getSimpleName().equals(Exit.class.getSimpleName()))
                 flag = true;
             command.execute();
@@ -66,6 +69,7 @@ public class Controller {
      * В параметры метода передается переменная типа String
      * Цикл foreach проходит по каждому обьекту коллекции commandArrayList, чтобы найти нужную команду
      * Если команда не найдена, возвращается команда Help
+     *
      * @param command
      * @return
      */
@@ -92,5 +96,18 @@ public class Controller {
 
     public HashSet<LabWork> getLabWorks() {
         return labWorks;
+    }
+
+//    private String toCapitalLetter(String command) {
+//        return command.substring(0, 1).toUpperCase() + command.substring(1);
+//    }
+
+    private String reformatCmd(String cmd) {
+        if (!cmd.contains("_"))
+            return WordUtils.capitalize(cmd);
+        cmd = cmd.replaceAll("_", " ");
+        cmd = WordUtils.capitalize(cmd).trim();
+        cmd = cmd.replaceAll(" ", "");
+        return cmd;
     }
 }
