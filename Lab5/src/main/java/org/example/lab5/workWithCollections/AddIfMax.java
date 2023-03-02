@@ -20,11 +20,11 @@ public class AddIfMax extends Invoker {
     }
 
     public void addIfMax(LabWork e){
-       // addMax.execute(e);
+        // addMax.execute(e);
     }
 
     @Override
     public void doCommand(String s) {
-
+        addMax.execute(s);
     }
 }
