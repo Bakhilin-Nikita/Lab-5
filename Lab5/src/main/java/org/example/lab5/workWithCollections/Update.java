@@ -6,10 +6,10 @@ import org.example.lab5.UpdateCommand;
 public class Update extends Invoker {
     public UpdateCommand updateEl;
     private static final String COMMAND_NAME = "update";
-    private static final String regex = "\\w*";
+    private static final String regex = "\\d*\\s\\w*";
 
     public static String getCommandName() {
-        return COMMAND_NAME;
+        return COMMAND_NAME+" "+regex;
     }
     public String getRegex() {
         return regex;
@@ -19,12 +19,11 @@ public class Update extends Invoker {
         this.updateEl = updateEl;
     }
 
-    public void update(int id, LabWork e){
-        updateEl.execute(id, e);
-    }
-
     @Override
     public void doCommand(String s) {
-
+        String[] strings = s.split(" ");
+        int id = Integer.parseInt(strings[0].trim());
+        String field = strings[strings.length-1];
+        updateEl.execute(id,field);
     }
 }

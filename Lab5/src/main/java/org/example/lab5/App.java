@@ -125,7 +125,7 @@ public class App {
                 Pattern p = Pattern.compile(key);
                 Matcher matcher = p.matcher(line);
                 if (matcher.find()) {
-                    String[] strings = line.split(" ", 0);
+                    String[] strings = line.split(" ", 2);
                     value.doCommand(strings[strings.length - 1]);
                     flag = false;
                     break;

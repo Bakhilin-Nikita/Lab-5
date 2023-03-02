@@ -9,6 +9,7 @@ import org.example.lab5.entity.enums.Difficulty;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class Root {
@@ -236,22 +237,31 @@ public class Root {
         }
     }
 
-    public void update(int id, LabWork e) {
+    public void update(int id, String name) throws IOException{
         boolean flag = true;
+
         for (LabWork lab: labWorkSet) {
             if (lab.getId() == id) {
+                Coordinates coordinates = addCoordinates();
+                Person author = addPerson();
+                int minimalPoint = addMinimalPoint();
+                int tunedInWorks = addTunedInWorks();
+                Difficulty difficulty = addDifficulty();
+                LabWork e = new LabWork(name,minimalPoint,tunedInWorks,difficulty,coordinates,author);
+
                 lab.setName(e.getName());
                 lab.setAuthor(e.getAuthor());
                 lab.setCoordinates(e.getCoordinates());
                 lab.setDifficulty(e.getDifficulty());
                 lab.setMinimalPoint(e.getMinimalPoint());
                 lab.setTunedInWorks(e.getTunedInWorks());
+
                 flag = false;
                 break;
             }
-            if (flag) {
-                System.out.println(" Элемент с данным ID отсутствует ");
-            }
+        }
+        if (flag){
+            System.out.println("Элемент с данным ID отсутствует!");
         }
     }
 }
