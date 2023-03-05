@@ -40,6 +40,10 @@ public class LabWork {
         this.creationDate = ZonedDateTime.now();
     }
 
+    public ZonedDateTime getCreationDate() {
+        return creationDate;
+    }
+
     public void setDifficulty(Difficulty diff) {
         this.difficulty = diff;
     }

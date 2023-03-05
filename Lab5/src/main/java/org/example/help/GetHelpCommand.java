@@ -4,8 +4,8 @@ import org.example.lab5.Command;
 
 public class GetHelpCommand implements Command {
 
-    private Info instruction;
-    public GetHelpCommand(Info i){
+    private Information instruction;
+    public GetHelpCommand(Information i){
         this.instruction = i;
     }
     @Override

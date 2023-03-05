@@ -9,17 +9,19 @@ import org.example.lab5.entity.enums.Difficulty;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.*;
 
 public class Root {
 
     private Set<LabWork> labWorkSet;
 
+    //конструктор для корневого элемента, чтобы у него сразу была коллекция
     public Root() {
         this.labWorkSet = new HashSet<>();
     }
 
+    //компаратор для сравнения элементов коллекции. В качестве элемента сравнения беру поле minimalPoint
     Comparator<LabWork> compareByMinPoint = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
@@ -27,6 +29,7 @@ public class Root {
         }
     };
 
+    //то же, но если в первом случае было сравнение по возрастанию, то здесь по убыванию
     Comparator<LabWork> compareByMinPointReverse = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
@@ -34,6 +37,7 @@ public class Root {
         }
     };
 
+    //компаратор для сравнения элементов по ID
     Comparator<LabWork> compareByID = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
@@ -41,6 +45,7 @@ public class Root {
         }
     };
 
+    //геттер и сеттер, но их используем только с экспериментальных целях
     public void setLabWorkSet(HashSet<LabWork> labWorkSet) {
         this.labWorkSet = labWorkSet;
     }
@@ -48,7 +53,7 @@ public class Root {
     public Set<LabWork> getLabWorkSet() {
         return labWorkSet;
     }
-
+    //to String. Пусть будет.
     @Override
     public String toString() {
         return "Root{" +
@@ -56,6 +61,8 @@ public class Root {
                 '}';
     }
 
+    //Отсюда начинаются все методы. Они же и есть ресиверы нашей программы.
+    //Метод show: показывает элементы коллекции
     public void show() {
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(labWorkSet);
@@ -66,6 +73,23 @@ public class Root {
         }
     }
 
+    //доп. метод для команды info (ниже)
+    private LocalDate getCreationDate(){
+        List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.addAll(labWorkSet);
+        LabWork minimum = Collections.min(labWorkSet,compareByID);
+
+        return minimum.getCreationDate().toLocalDate();
+    }
+
+    //Метод info: получение информации о коллекции
+    public void getInfo(){
+        System.out.println("Тип коллекции: "+labWorkSet.getClass());
+        System.out.println("Дата инициализации: "+getCreationDate());
+        System.out.println("Количество элементов: "+labWorkSet.size());
+    }
+
+    //Добавить элемент в коллекцию
     public void addElement(String name) throws IOException {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
@@ -76,6 +100,7 @@ public class Root {
         labWorkSet.add(e);
     }
 
+    //Добавить элемент в коллекцию, если он больше остальных. Сравниваю по minimalPoint
     public void addIfMax(String name) throws IOException{
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
@@ -89,6 +114,7 @@ public class Root {
         }
     }
 
+    //Доп метод для add: добавить minimalPoint
     private static int addMinimalPoint() throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите minimalPoint:");
@@ -96,6 +122,7 @@ public class Root {
         return minimalPoint;
     }
 
+    //Доп метод для add: добавить tunedInWorks
     private static int addTunedInWorks() throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите tuned in works:");
@@ -103,6 +130,7 @@ public class Root {
         return tunedInWorks;
     }
 
+    //Доп метод для add: добавить координаты
     private static Coordinates addCoordinates() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите координату x:");
@@ -113,6 +141,7 @@ public class Root {
         return new Coordinates(x, y);
     }
 
+    //Доп метод для add: добавить сложность
     private static Difficulty addDifficulty() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
@@ -120,19 +149,29 @@ public class Root {
         return Difficulty.valueOf(difficulty);
     }
 
+    //Доп метод для add: добавить имя. Пока не использован, но может понадобиться для доработки update
+    private static String addName() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Введите имя:");
+        String name = reader.readLine();
+        return name;
+    }
+
+    //Доп метод для add: добавить автора
     private static Person addPerson() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите имя автора: ");
         String name = reader.readLine();
         System.out.println("Введите рост автора: ");
         float height = Float.parseFloat(reader.readLine());
-        System.out.println("Введите дату рождения автора: ");
-        String birthday = reader.readLine();
+        System.out.println("Введите дату рождения автора (гг-мм-дд): ");
+        LocalDate birthday = LocalDate.parse(reader.readLine());
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
         String color = reader.readLine();
-        return new Person(name, Color.valueOf(color), height, birthday);
+        return new Person(name, Color.valueOf(color), height, birthday.toString());
     }
 
+    //Удалить элемент из коллекции
     public void removeEl(int id) {
         int flag = 0;
         for (LabWork lab : labWorkSet) {
@@ -147,10 +186,12 @@ public class Root {
         }
     }
 
+    //Очистить коллекцию
     public void clearCollection(){
         labWorkSet.clear();
     }
 
+    //Вывести уникальные значения tunedInWorks
     public void printUniqueTunedInWorks(){
         Set<Integer> unique = new HashSet<>();
         for (LabWork lab: labWorkSet){
@@ -167,10 +208,12 @@ public class Root {
         System.out.println("\n");
     }
 
+    //Доп метод для вывода коллекции элементов (используется в команде выше)
     private void printCollection(Collection<Integer> collection) {
         collection.forEach(System.out::println);
     }
 
+    //Вывести значения tunedInWorks в порядке возрастания
     public void printFieldAscendingTunedInWorks() {
         List<Integer> tunedInWorks = new LinkedList<>();
         for (LabWork lab: labWorkSet){
@@ -188,6 +231,7 @@ public class Root {
         System.out.println("\n");
     }
 
+    //Вывести максимального автора. Я хрен знает, как сравнить авторов, поэтому их сравнивают по имени.
     public void maxByAuthor() {
         List<Person> authors = new ArrayList<>();
         // вывести в метод
@@ -208,13 +252,7 @@ public class Root {
         System.out.println("Цвет глаз: " + greatest.getEyeColor());
     }
 
-    public void addIfMax(LabWork e) {
-        LabWork maximum = Collections.max(labWorkSet,compareByMinPoint);
-        if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0){
-            labWorkSet.add(e);
-        }
-    }
-
+    //Удалить из коллекции все элементы, превышающие заданный
     public void removeGreater(String e){
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(labWorkSet);
@@ -226,6 +264,7 @@ public class Root {
         }
     }
 
+    //Удалить из коллекции все элементы, меньшие, чем заданный
     public void removeLower(String e){
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(labWorkSet);
@@ -237,6 +276,7 @@ public class Root {
         }
     }
 
+    //Обновить элемент. Возможно, буду дорабатывать этот метод
     public void update(int id, String name) throws IOException{
         boolean flag = true;
 
@@ -264,4 +304,6 @@ public class Root {
             System.out.println("Элемент с данным ID отсутствует!");
         }
     }
+
+    //я устану объяснять все детали паттерна Command в каждом из классов, поэтому просмотри ты только классы Invoker, UpdateElementCommand и Update
 }
