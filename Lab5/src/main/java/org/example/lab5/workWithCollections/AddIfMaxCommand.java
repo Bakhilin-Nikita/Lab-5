@@ -5,6 +5,7 @@ import org.example.lab5.LabWork;
 import org.example.lab5.parserFromJson.Root;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 public class AddIfMaxCommand implements ElementCommand {
     private Root root;
@@ -17,7 +18,7 @@ public class AddIfMaxCommand implements ElementCommand {
     public void execute(String e) {
         try {
             root.addIfMax(e);
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             throw new RuntimeException(ex);
         }
     }

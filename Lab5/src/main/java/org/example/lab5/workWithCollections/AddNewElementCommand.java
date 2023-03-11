@@ -4,6 +4,7 @@ import org.example.lab5.ElementCommand;
 import org.example.lab5.parserFromJson.Root;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 public class AddNewElementCommand implements ElementCommand {
     private Root root;
@@ -16,7 +17,7 @@ public class AddNewElementCommand implements ElementCommand {
     public void execute(String e) {
         try {
             root.addElement(e);
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             throw new RuntimeException(ex);
         }
     }

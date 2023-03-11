@@ -9,8 +9,12 @@ import org.example.lab5.entity.enums.Difficulty;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+
+import static java.time.LocalDate.parse;
 
 public class Root {
 
@@ -90,7 +94,7 @@ public class Root {
     }
 
     //Добавить элемент в коллекцию
-    public void addElement(String name) throws IOException {
+    public void addElement(String name) throws IOException, ParseException {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
@@ -101,7 +105,7 @@ public class Root {
     }
 
     //Добавить элемент в коллекцию, если он больше остальных. Сравниваю по minimalPoint
-    public void addIfMax(String name) throws IOException{
+    public void addIfMax(String name) throws IOException, ParseException {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
@@ -158,7 +162,7 @@ public class Root {
     }
 
     //Доп метод для add: добавить автора
-    private static Person addPerson() throws IOException {
+    private static Person addPerson() throws IOException, ParseException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите имя автора: ");
         String name = reader.readLine();
@@ -166,9 +170,11 @@ public class Root {
         float height = Float.parseFloat(reader.readLine());
         System.out.println("Введите дату рождения автора (гг-мм-дд): ");
         LocalDate birthday = LocalDate.parse(reader.readLine());
+        String[] dateSplit = birthday.toString().split("-");
+        String date = dateSplit[2]+"-"+dateSplit[1]+"-"+dateSplit[0];
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
         String color = reader.readLine();
-        return new Person(name, Color.valueOf(color), height, birthday.toString());
+        return new Person(name, Color.valueOf(color), height, date);
     }
 
     //Удалить элемент из коллекции
@@ -277,7 +283,7 @@ public class Root {
     }
 
     //Обновить элемент. Возможно, буду дорабатывать этот метод
-    public void update(int id, String name) throws IOException{
+    public void update(int id, String name) throws IOException, ParseException {
         boolean flag = true;
 
         for (LabWork lab: labWorkSet) {

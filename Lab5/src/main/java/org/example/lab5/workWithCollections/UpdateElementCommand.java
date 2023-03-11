@@ -6,6 +6,7 @@ import org.example.lab5.UpdateCommand;
 import org.example.lab5.parserFromJson.Root;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 //все команды наследуются от 4 интерфейсов: в основном это Command, реже - ElementCommand, IDCommand и UpdateCommand.
 // В данном случае имплементируем UpdateCommand.
@@ -23,7 +24,7 @@ public class UpdateElementCommand implements UpdateCommand {
     public void execute(int id, String field) {
         try {
             root.update(id, field);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
