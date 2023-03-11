@@ -1,14 +1,14 @@
-package org.example.lab5.workWithCollections;
+package org.example.lab5.commands;
 
 import org.example.lab5.IDCommand;
 
 public class Remove extends Invoker {
     private IDCommand removeElement;
     private static final String COMMAND_NAME = "remove";
-    private static final String regex = "\\d*";
+    private static final String regex = null;
 
     public static String getCommandName() {
-        return COMMAND_NAME+" "+regex;
+        return COMMAND_NAME;
     }
     public String getRegex() {
         return regex;

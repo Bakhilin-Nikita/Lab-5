@@ -1,12 +1,11 @@
-package org.example.lab5.workWithCollections;
+package org.example.lab5.commands;
 
 import org.example.lab5.ElementCommand;
 import org.example.lab5.LabWork;
 
-public class Add extends Invoker {
-
-    private ElementCommand add;
-    private static final String COMMAND_NAME = "add";
+public class AddIfMax extends Invoker {
+    private ElementCommand addMax;
+    private static final String COMMAND_NAME = "add_if_max";
     private static final String regex = "\\w*";
 
     public static String getCommandName() {
@@ -16,16 +15,16 @@ public class Add extends Invoker {
         return regex;
     }
 
-    public Add(ElementCommand add){
-        this.add = add;
+    public AddIfMax(ElementCommand addMax){
+        this.addMax = addMax;
     }
 
-    public void add(LabWork e){
-        //add.execute(e);
+    public void addIfMax(LabWork e){
+        // addMax.execute(e);
     }
 
     @Override
     public void doCommand(String s) {
-        add.execute(s);
+        addMax.execute(s);
     }
 }

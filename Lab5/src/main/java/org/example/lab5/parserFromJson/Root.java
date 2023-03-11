@@ -149,7 +149,7 @@ public class Root {
     private static Difficulty addDifficulty() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
-        String difficulty = reader.readLine();
+        String difficulty = reader.readLine().toUpperCase();
         return Difficulty.valueOf(difficulty);
     }
 
@@ -163,6 +163,7 @@ public class Root {
 
     //Доп метод для add: добавить автора
     private static Person addPerson() throws IOException, ParseException {
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите имя автора: ");
         String name = reader.readLine();
@@ -173,7 +174,8 @@ public class Root {
         String[] dateSplit = birthday.toString().split("-");
         String date = dateSplit[2]+"-"+dateSplit[1]+"-"+dateSplit[0];
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
-        String color = reader.readLine();
+        String color = reader.readLine().toUpperCase();
+
         return new Person(name, Color.valueOf(color), height, date);
     }
 

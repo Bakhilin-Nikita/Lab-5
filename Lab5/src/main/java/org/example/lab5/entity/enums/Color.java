@@ -1,5 +1,10 @@
 package org.example.lab5.entity.enums;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SplittableRandom;
+
 public enum Color {
     GREEN("зелёный"),
     RED("красный"),
@@ -17,4 +22,5 @@ public enum Color {
     public String toString() {
         return name;
     }
+
 }

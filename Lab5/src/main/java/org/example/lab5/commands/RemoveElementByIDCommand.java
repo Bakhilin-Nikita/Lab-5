@@ -1,4 +1,4 @@
-package org.example.lab5.workWithCollections;
+package org.example.lab5.commands;
 
 import org.example.lab5.IDCommand;
 import org.example.lab5.parserFromJson.Root;

@@ -1,7 +1,7 @@
 package org.example.help;
 
 import org.example.lab5.Command;
-import org.example.lab5.workWithCollections.Invoker;
+import org.example.lab5.commands.Invoker;
 
 public class Help extends Invoker {
     private Command getHelpCommand;

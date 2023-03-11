@@ -8,7 +8,7 @@ import org.example.lab5.exceptions.NullX;
 import org.example.lab5.exceptions.WrongCommandInputException;
 import org.example.lab5.parserFromJson.Root;
 import org.example.lab5.parserToJson.ParserToJson;
-import org.example.lab5.workWithCollections.*;
+import org.example.lab5.commands.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -99,11 +99,12 @@ public class App {
         commands.put(author.getCommandName(),author);
         commands.put(s.getCommandName(),s);
         commands.put(info.getCommandName(),info);
+        commands.put(r.getCommandName(),r);
 
         //А этот мап для команд С входными данными
         Map<String, Invoker> inputCommands = new HashMap<>();
         //добавляем сюда все команды с входными данными
-        inputCommands.put(r.getCommandName(),r);
+        //inputCommands.put(r.getCommandName(),r);
         inputCommands.put(a.getCommandName(),a);
         inputCommands.put(addMax.getCommandName(),addMax);
         inputCommands.put(greater.getCommandName(),greater);
