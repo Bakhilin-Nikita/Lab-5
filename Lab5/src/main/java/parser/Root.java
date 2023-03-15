@@ -11,7 +11,7 @@ public class Root {
     private ParserFromJson parser = new ParserFromJson();
     private HashSet<LabWork> labWorkSet = new HashSet<>();
 
-    public ParserFromJson getParser() {
+    private ParserFromJson getParser() {
         return parser;
     }
 
@@ -25,7 +25,6 @@ public class Root {
 
     public HashSet<LabWork> getLabWorkSet() {
         return labWorkSet;
-
     }
 
     //to String. Пусть будет.

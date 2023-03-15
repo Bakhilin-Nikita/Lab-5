@@ -10,7 +10,6 @@ import parser.parserFromJson.ParserFromJson;
 import parser.parserToJson.ParserToJson;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -23,17 +22,13 @@ public class HelperController {
 
     private Root root;
 
-    public HelperController() throws FileNotFoundException {
+    public HelperController() throws IOException {
         ParserFromJson parserFromJson = new ParserFromJson();
         this.root = parserFromJson.parse();
     }
 
     public Root getRoot() {
         return root;
-    }
-
-    public void setRoot(Root root) {
-        this.root = root;
     }
 
     //Обновить элемент. Возможно, буду дорабатывать этот метод
@@ -283,7 +278,7 @@ public class HelperController {
     public void maxByAuthor() {
         List<Person> authors = new ArrayList<>();
 
-        if (getRoot().getLabWorkSet().isEmpty()) {
+        if (!getRoot().getLabWorkSet().isEmpty()) {
             // вывести в метод
             for (LabWork lab : getRoot().getLabWorkSet()) {
                 authors.add(lab.getAuthor());

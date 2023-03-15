@@ -1,10 +1,10 @@
 package object;
 
-import object.Coordinates;
-import object.Person;
 import object.enums.Difficulty;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -13,18 +13,18 @@ import java.util.Objects;
 
 public class LabWork {
 
-    private  int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates = new Coordinates(); //Поле не может быть null
-    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private int minimalPoint; //Значение поля должно быть больше 0
     private int tunedInWorks;
     private Difficulty difficulty; //Поле может быть null
     private Person author; //Поле не может быть null
 
+    private String creationDateString;  //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
-
-    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author, String creationDateString) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
@@ -32,27 +32,65 @@ public class LabWork {
         this.author = Objects.requireNonNull(author);
         this.tunedInWorks = tunedInWorks; // I do not understand what is it
         this.difficulty = Objects.requireNonNull(difficulty);
-        this.creationDate = ZonedDateTime.now();
+
+        if (creationDateString.isEmpty()) {
+            ZonedDateTime date = ZonedDateTime.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.
+                    ofPattern(DateTimeFormatter.
+                            ofPattern("MM/dd/yyyy - HH:mm:ss Z").
+                            format(date));
+            this.creationDateString = date.format(formatter);
+        } else {
+            this.creationDateString = creationDateString;
+        }
+    }
+
+    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+        this.id = id;
+        this.name = Objects.requireNonNull(name);
+        this.coordinates = Objects.requireNonNull(coordinates);
+        this.minimalPoint = minimalPoint;
+        this.author = Objects.requireNonNull(author);
+        this.tunedInWorks = tunedInWorks;
+        this.difficulty = Objects.requireNonNull(difficulty);
+
+
+        ZonedDateTime date = ZonedDateTime.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.
+                ofPattern(DateTimeFormatter.
+                        ofPattern("MM/dd/yyyy - HH:mm:ss Z").
+                        format(date));
+        this.creationDateString = date.format(formatter);
     }
 
     public LabWork(String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
-        //this.id = createID();
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;
         this.author = Objects.requireNonNull(author);
         this.tunedInWorks = tunedInWorks; // I do not understand what is it
         this.difficulty = Objects.requireNonNull(difficulty);
-        this.creationDate = ZonedDateTime.now();
+        ZonedDateTime date = ZonedDateTime.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.
+                ofPattern(DateTimeFormatter.
+                        ofPattern("MM/dd/yyyy - HH:mm:ss Z").
+                        format(date));
+        this.creationDateString = date.format(formatter);
     }
 
     public ZonedDateTime getCreationDate() {
-        return this.creationDate;
-       // return null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
+        formatter = formatter.withLocale(Locale.US);  // Locale specifies human language for translating, and cultural norms for lowercase/uppercase and abbreviations and such. Example: Locale.US or Locale.CANADA_FRENCH
+        ZonedDateTime date = ZonedDateTime.parse(this.creationDateString, formatter);
+        return date;
     }
 
-    public void setCreationDate(ZonedDateTime creationDate) {
-        this.creationDate = creationDate;
+
+    public String getCreationDateString() {
+        return creationDateString;
     }
 
     public void setDifficulty(Difficulty diff) {
@@ -112,6 +150,7 @@ public class LabWork {
         return "id:" + id + "\n" +
                 "name:" + name + "\n" +
                 "coordinates:" + "\n" +
+                "creationDate:" + creationDateString + "\n" +
                 "[x=" + getCoordinates().getX() + "\n" +
                 "y=" + getCoordinates().getY() + "]" + "\n" +
                 "minimalPoint=" + minimalPoint + "\n" +
