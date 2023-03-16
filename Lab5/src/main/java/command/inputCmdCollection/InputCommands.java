@@ -24,8 +24,8 @@ public class InputCommands {
         ElementCommand addEl = new AddNewElementCommand(helperController);
         Add a = new Add(addEl);
 
-        ElementCommand addElIfMax = new AddIfMaxCommand(helperController);
-        AddIfMax addMax = new AddIfMax(addElIfMax);
+//        ElementCommand addElIfMax = new AddIfMaxCommand(root);
+//        AddIfMax addMax = new AddIfMax(addElIfMax);
 //
         ElementCommand removeGreaterEl = new RemoveGreaterElementCommand(helperController);
         RemoveGreater greater = new RemoveGreater(removeGreaterEl);
@@ -42,7 +42,7 @@ public class InputCommands {
         //добавляем сюда все команды без входных элементов
         inputCommands.put(a.getCommandName(), a);
         inputCommands.put(removeEl.getCommandName(), removeEl);
-        inputCommands.put(addMax.getCommandName(), addMax);
+//        inputCommands.put(addMax.getCommandName(), addMax);
         inputCommands.put(greater.getCommandName(), greater);
         inputCommands.put(lower.getCommandName(), lower);
         inputCommands.put(update.getCommandName(), update);

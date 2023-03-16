@@ -18,7 +18,7 @@ public class NoInputCommands {
     private HelperController helperController;
 
     public NoInputCommands(HelperController helperController) throws FileNotFoundException {
-        //this.root = root;
+
         this.helperController = helperController;
 
         Command getHelp = new GetHelpCommand(new Information());
@@ -29,9 +29,6 @@ public class NoInputCommands {
 
         Command showLabs = new ShowTheCollectionCommand(helperController);
         Show s = new Show(showLabs);
-
-//        IDCommand removeEl = new RemoveElementByIDCommand(this.root);
-//        Remove r = new Remove(removeEl);
 
         Command clearLabs = new ClearTheCollectionCommand(helperController);
         Clear c = new Clear(clearLabs);
