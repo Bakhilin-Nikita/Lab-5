@@ -97,6 +97,7 @@ public class Controller {
 
         // No input commands
         for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
+
             String key = entry.getKey();
             if (command.equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
@@ -107,11 +108,16 @@ public class Controller {
         //если не было совпадений в первом мапе, пробегаемся по мапу команд с аргументами
         for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
             String key = entry.getKey();
-            String commandKey = command.replaceAll("\\d","");
-            if (commandKey.equals(key)) {
+            //String commandKey = command.replaceAll("\\d","");
+            String[] commandSplit = command.split(" ", 2);
+            if (commandSplit[0].equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
-                entry.getValue().doCommand(command);
+                entry.getValue().doCommand(commandSplit[1]);
             }
+            //if (commandKey.equals(key)) {
+                //System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
+               // entry.getValue().doCommand(command);
+            //}
         }
 
     }
@@ -126,6 +132,19 @@ public class Controller {
     }
 
     private String reformatCmd(String cmd) {
+        if (cmd.contains(" ")) {
+            String[] cmdSplit = cmd.split(" ", 2);
+            cmd = cmdSplit[0];
+            String data = cmdSplit[1];
+            cmd = reformation(cmd);
+            cmd = cmd + " " + data;
+        } else {
+            cmd = reformation(cmd);
+        }
+        return cmd;
+    }
+
+    private static String reformation(String cmd){
         cmd = cmd.replaceAll("_", " ");
         cmd = WordUtils.capitalize(cmd).trim();
         cmd = cmd.replaceAll(" ", "");

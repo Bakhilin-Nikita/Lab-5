@@ -9,10 +9,7 @@ import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import parser.parserToJson.ParserToJson;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.ParseException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -36,10 +33,13 @@ public class HelperController {
         this.root = root;
     }
 
+    private static void endOfCommand(){
+        System.out.println("Выполнение команды завершено.");
+    }
+
     //Обновить элемент. Возможно, буду дорабатывать этот метод
     public void update(int id) throws IOException, ParseException {
         boolean flag = true;
-
 
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
@@ -68,9 +68,7 @@ public class HelperController {
         if (flag) {
             System.out.println("Элемент с данным ID отсутствует!");
         }
-
-        for (LabWork lab : getRoot().getLabWorkSet())
-            System.out.println("Author name: " + lab.getAuthor().getName());
+        endOfCommand();
     }
 
 
@@ -86,7 +84,7 @@ public class HelperController {
                 System.out.println(lab);
             }
         }
-
+        endOfCommand();
     }
 
     //доп. метод для команды info (ниже)
@@ -99,7 +97,7 @@ public class HelperController {
     //Метод info: получение информации о коллекции
     public void getInfo() {
         if (getRoot().getLabWorkSet().isEmpty()) {
-            System.out.println("Uнформация по коллекции не найдена! Возможно она удаленна.");
+            System.out.println("Ынформация по коллекции не найдена! Возможно она удаленна.");
         } else {
             System.out.println("Тип коллекции: " + getRoot().getLabWorkSet().getClass().getSimpleName());
             System.out.println("Дата инициализации: " + getCreationDate());
@@ -120,7 +118,7 @@ public class HelperController {
             getRoot().getLabWorkSet().remove(el);
         }
 
-        System.out.println("Все элементы выше данного, были удаленны.");
+        endOfCommand();
     }
 
     //Удалить из коллекции все элементы, меньшие, чем заданный
@@ -136,7 +134,7 @@ public class HelperController {
             getRoot().getLabWorkSet().remove(el);
         }
 
-        System.out.println("Все элементы меньше данного были удалены.");
+        endOfCommand();
     }
 
     //Удалить элемент из коллекции
@@ -146,7 +144,7 @@ public class HelperController {
             if (lab.getId() == id) {
                 getRoot().getLabWorkSet().remove(lab);
                 flag = 1;
-                System.out.println("Элемент с данными id удалён.");
+                endOfCommand();
                 break;
             }
         }
@@ -156,10 +154,7 @@ public class HelperController {
     }
 
     //Добавить элемент в коллекцию
-    public void addElement() throws IOException, ParseException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Введите название Лабараторной работы: ");
-        String name = reader.readLine();
+    public void addElement(String name) throws IOException, ParseException {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
@@ -168,18 +163,20 @@ public class HelperController {
         int id = generateId();
         LabWork e = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         getRoot().getLabWorkSet().add(e);
+        endOfCommand();
     }
 
     public int generateId() {
-        Map<Integer, LabWork> labs = new HashMap<>();
-        for (LabWork lab : getRoot().getLabWorkSet())
-            labs.put((int) lab.getId(), lab);
-        labs = sortByKeys(labs);
-        return labs.size() + 1;
-    }
-
-    public <K, V> Map<K, V> sortByKeys(Map<K, V> unsortedMap) {
-        return new TreeMap<>(unsortedMap);
+        int id = getRoot().getLabWorkSet().size() + 1;
+        List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.addAll(getRoot().getLabWorkSet());
+        labWorkList.sort(compareByID);
+        for (LabWork labWork: labWorkList){
+            if (labWork.getId() == id){
+                id++;
+            }
+        }
+        return id;
     }
 
     private static int addMinimalPoint() throws IOException {
@@ -196,11 +193,13 @@ public class HelperController {
         int minimalPoint = addMinimalPoint();
         int tunedInWorks = addTunedInWorks();
         Difficulty difficulty = addDifficulty();
-        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        int id = generateId();
+        LabWork e = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         LabWork maximum = Collections.max(getRoot().getLabWorkSet(), compareByMinPoint);
         if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0) {
             getRoot().getLabWorkSet().add(e);
         }
+        endOfCommand();
     }
 
     //Доп метод для add: добавить tunedInWorks
@@ -247,7 +246,7 @@ public class HelperController {
     }
 
     //Доп метод для add: добавить автора
-    private static Person addPerson() throws IOException, ParseException {
+    private static Person addPerson() throws IOException, ParseException, DateTimeException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите имя автора: ");
         String name = reader.readLine();
@@ -255,21 +254,19 @@ public class HelperController {
         float height = Float.parseFloat(reader.readLine());
         String date = null;
         LocalDate birthday = null;
-        while (birthday == null) {
-            try {
-                System.out.println("Введите дату рождения автора (гггг-мм-дд): ");
-                birthday = LocalDate.parse(reader.readLine());
-                String[] dateSplit = birthday.toString().split("-");
-                date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
-            } catch (DateTimeException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+
+        System.out.println("Введите дату рождения автора (дд-мм-гггг): ");
+        date = reader.readLine();
+        String[] dateSplit = date.split("-");
+        date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
+        birthday = LocalDate.parse(date);
+        String[] birthdaySplit = birthday.toString().split("-");
+        String birthdayDate = birthdaySplit[2]+"-"+birthdaySplit[1]+"-"+birthdaySplit[0];
 
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
         String color = reader.readLine().toUpperCase();
 
-        return new Person(name, Color.valueOf(color), height, date);
+        return new Person(name, Color.valueOf(color), height, birthdayDate);
     }
 
     //Очистить коллекцию
@@ -283,24 +280,23 @@ public class HelperController {
     public void maxByAuthor() {
         List<Person> authors = new ArrayList<>();
 
-        if (getRoot().getLabWorkSet().isEmpty()) {
-            // вывести в метод
-            for (LabWork lab : getRoot().getLabWorkSet()) {
-                authors.add(lab.getAuthor());
-            }
-            Comparator<Person> compareByName = new Comparator<Person>() {
-                @Override
-                public int compare(Person o1, Person o2) {
+        // вывести в метод
+        for (LabWork lab : getRoot().getLabWorkSet()) {
+            authors.add(lab.getAuthor());
+        }
+        Comparator<Person> compareByName = new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
-            };
-            Person greatest = Collections.max(authors, compareByName);
-            System.out.println(" ----- Автор -----");
-            System.out.println("Uмя: " + greatest.getName());
-            System.out.println("Дата рождения: " + greatest.getBirthday());
-            System.out.println("Рост: " + greatest.getHeight());
-            System.out.println("Цвет глаз: " + greatest.getEyeColor());
-        }
+        };
+        Person greatest = Collections.max(authors, compareByName);
+        System.out.println(" ----- Автор -----");
+        System.out.println("Uмя: " + greatest.getName());
+        System.out.println("Дата рождения: " + greatest.getBirthday());
+        System.out.println("Рост: " + greatest.getHeight());
+        System.out.println("Цвет глаз: " + greatest.getEyeColor());
+        endOfCommand();
     }
 
     //Вывести уникальные значения tunedInWorks
@@ -312,6 +308,7 @@ public class HelperController {
 
         printCollection(unique);
         System.out.println("\n");
+        endOfCommand();
     }
 
     //Доп метод для вывода коллекции элементов (используется в команде выше)
@@ -332,6 +329,7 @@ public class HelperController {
 
 
         System.out.println("\n");
+        endOfCommand();
     }
 
     //компаратор для сравнения элементов коллекции. В качестве элемента сравнения беру поле minimalPoint
@@ -357,5 +355,14 @@ public class HelperController {
             return (int) (o1.getId() - o2.getId());
         }
     };
+
+    public void execute_script(File file) throws ParseException, IOException, FileNotFoundException{
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = reader.readLine();
+        while (line != null) {
+            System.out.println(line);
+            line = reader.readLine();
+        }
+    }
 
 }

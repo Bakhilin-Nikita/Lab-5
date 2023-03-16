@@ -18,7 +18,7 @@ public class ParserFromJson {
     public Root parse() {
         Root root = new Root();
         JSONParser parser = new JSONParser();
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream("C:\\Users\\79170\\IdeaProjects\\labaratoty-5\\notes.json"))) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream("C:\\Users\\danie\\IdeaProjects\\experimemt\\notes.json"))) {
 
             JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
