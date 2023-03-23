@@ -44,6 +44,8 @@ public class NoInputCommands {
 
         Save save = new Save(helperController);
 
+        Exit exit = new Exit(helperController);
+
         commands.put(help.getCommandName(), help);
         commands.put(c.getCommandName(), c);
         commands.put(unique.getCommandName(), unique);
@@ -52,6 +54,7 @@ public class NoInputCommands {
         commands.put(s.getCommandName(), s);
         commands.put(info.getCommandName(), info);
         commands.put(save.getCommandName(), save);
+        commands.put(exit.getCommandName(), exit);
     }
 
     public Map<String, Invoker> getCommands() {

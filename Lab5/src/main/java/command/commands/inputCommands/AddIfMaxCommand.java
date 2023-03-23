@@ -1,4 +1,4 @@
-package command.commands;
+package command.commands.inputCommands;
 
 import command.ElementCommand;
 import command.HelperController;

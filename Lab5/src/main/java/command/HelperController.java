@@ -19,17 +19,45 @@ import java.util.*;
 
 public class HelperController {
     private ParserFromJson parser = new ParserFromJson();
-
     private Root root;
+
+    private ArrayList<String> paths = new ArrayList<>();
+
+    private BufferedReader reader;
 
     public HelperController() throws IOException {
         ParserFromJson parserFromJson = new ParserFromJson();
         this.root = parserFromJson.parse();
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
+        this.paths.add("/home/studs/s367870/");
+    }
+
+    public boolean addToPaths(String pathToFile) {
+        int j = 0;
+        pathToFile = "home/studs/s367870/"+pathToFile;
+        for (int i = 0; i < getPaths().size(); i++) {
+            if (Objects.equals(getPaths().get(i).trim(), pathToFile)) {
+                return false;
+            }
+        }
+
+        getPaths().add(pathToFile);
+
+        return true;
+    }
+
+    public ArrayList<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(ArrayList<String> paths) {
+        this.paths = paths;
     }
 
     public Root getRoot() {
         return root;
     }
+
 
     //Обновить элемент. Возможно, буду дорабатывать этот метод
     public void update(int id) throws IOException, ParseException {
@@ -38,8 +66,7 @@ public class HelperController {
 
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                System.out.println("Введите название: ");
+                System.out.println("Введите название Лабараторной работы: ");
                 String name = reader.readLine();
                 Coordinates coordinates = addCoordinates();
                 Person author = addPerson();
@@ -86,7 +113,8 @@ public class HelperController {
 
     //доп. метод для команды info (ниже)
     private LocalDate getCreationDate() {
-        List<LabWork> labWorkList = new ArrayList<>(getRoot().getLabWorkSet());
+        List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.addAll(getRoot().getLabWorkSet());
         LabWork minimum = Collections.min(labWorkList, compareByID);
         return minimum.getCreationDate().toLocalDate();
     }
@@ -94,7 +122,7 @@ public class HelperController {
     //Метод info: получение информации о коллекции
     public void getInfo() {
         if (getRoot().getLabWorkSet().isEmpty()) {
-            System.out.println("Uнформация по коллекции не найдена! Возможно она удаленна.");
+            System.out.println("Информация по коллекции не найдена! Возможно она удаленна.");
         } else {
             System.out.println("Тип коллекции: " + getRoot().getLabWorkSet().getClass().getSimpleName());
             System.out.println("Дата инициализации: " + getCreationDate());
@@ -122,7 +150,7 @@ public class HelperController {
     public void removeLower(String e) {
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(getRoot().getLabWorkSet());
-        labWorkList.sort(compareByMinPoint);
+        labWorkList.sort(compareByName);
 
         for (LabWork el : labWorkList) {
             if (el.getName().equals(e)) {
@@ -152,7 +180,6 @@ public class HelperController {
 
     //Добавить элемент в коллекцию
     public void addElement() throws IOException, ParseException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите название Лабараторной работы: ");
         String name = reader.readLine();
         Coordinates coordinates = addCoordinates();
@@ -162,7 +189,11 @@ public class HelperController {
         Difficulty difficulty = addDifficulty();
         int id = generateId();
         LabWork e = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
-        getRoot().getLabWorkSet().add(e);
+
+        if (getRoot().getLabWorkSet().add(e))
+            System.out.println("Элемент успешно добавлен в коллекцию!");
+        else
+            System.out.println("К сожалению, что-то пошло не так. Попробуйте еще раз!");
     }
 
     public int generateId() {
@@ -177,10 +208,9 @@ public class HelperController {
         return new TreeMap<>(unsortedMap);
     }
 
-    private static int addMinimalPoint() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private int addMinimalPoint() throws IOException {
         System.out.println("Введите minimalPoint:");
-        int minimalPoint = Integer.parseInt(reader.readLine());
+        int minimalPoint = checkOnInt();
         return minimalPoint;
     }
 
@@ -199,55 +229,73 @@ public class HelperController {
     }
 
     //Доп метод для add: добавить tunedInWorks
-    private static int addTunedInWorks() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private int addTunedInWorks() {
         System.out.println("Введите tuned in works:");
-        int tunedInWorks = Integer.parseInt(reader.readLine());
+        int tunedInWorks = checkOnInt();
         return tunedInWorks;
     }
 
     //Доп метод для add: добавить координаты
-    private static Coordinates addCoordinates() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private Coordinates addCoordinates() throws IOException {
         System.out.println("Введите координату x:");
-        int x = Integer.parseInt(reader.readLine());
+        int x = checkOnInt();
         System.out.println("Введите координату y:");
-        double y = Double.parseDouble(reader.readLine());
+        double y = checkOnDouble();
 
         return new Coordinates(x, y);
     }
 
+    private double checkOnDouble() {
+        double y = 0;
+        boolean flag = false;
+        while (!flag) {
+            try {
+                y = Double.parseDouble(reader.readLine());
+                flag = true;
+            } catch (IOException | NumberFormatException e) {
+                flag = false;
+            }
+        }
+
+        return y;
+    }
+
+    private int checkOnInt() {
+        int y = 0;
+        boolean flag = false;
+        while (!flag)
+            try {
+                y = Integer.parseInt(reader.readLine());
+                flag = true;
+            } catch (NumberFormatException | IOException e) {
+                flag = false;
+            }
+        return y;
+    }
+
     public void save() {
         ParserToJson parserToJson = new ParserToJson();
-        if(parserToJson.serialization(getRoot().getLabWorkSet()))
+
+        if (parserToJson.serialization(getRoot().getLabWorkSet()))
             System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
         else
             System.out.println("Что-то пошлое не так :(");
     }
 
     //Доп метод для add: добавить сложность
-    private static Difficulty addDifficulty() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private Difficulty addDifficulty() throws IOException {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
-        String difficulty = reader.readLine().toUpperCase();
+        String difficulty = checkOnEnum(Difficulty.class);
         return Difficulty.valueOf(difficulty);
     }
 
-    //Доп метод для add: добавить имя. Пока не использован, но может понадобиться для доработки update
-    private static String addName() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Введите имя:");
-        String name = reader.readLine();
-        return name;
-    }
 
     //Доп метод для add: добавить автора
-    private static Person addPerson() throws IOException, ParseException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private Person addPerson() throws IOException {
         System.out.println("Введите имя автора: ");
         String name = reader.readLine();
         System.out.println("Введите рост автора: ");
-        float height = Float.parseFloat(reader.readLine());
+        float height = checkOnFloat();
         String date = null;
         LocalDate birthday = null;
         while (birthday == null) {
@@ -262,9 +310,41 @@ public class HelperController {
         }
 
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
-        String color = reader.readLine().toUpperCase();
+        String color = checkOnEnum(Color.class);
 
         return new Person(name, Color.valueOf(color), height, date);
+    }
+
+    private String checkOnEnum(Class className) {
+        boolean flag = false;
+        String enumValue = null;
+        while (!flag) {
+            try {
+                enumValue = reader.readLine().toUpperCase();
+                Enum.valueOf(className, enumValue);
+                flag = true;
+            } catch (IllegalArgumentException | IOException e) {
+                flag = false;
+            }
+        }
+
+        return enumValue;
+    }
+
+    private float checkOnFloat() {
+        float y = 0;
+        boolean flag = false;
+        while (!flag)
+            try {
+                String cmd = reader.readLine();
+                if (cmd != null) {
+                    y = Float.parseFloat(cmd);
+                    flag = true;
+                }
+            } catch (NumberFormatException | IOException e) {
+                flag = false;
+            }
+        return y;
     }
 
     //Очистить коллекцию
@@ -329,6 +409,21 @@ public class HelperController {
         System.out.println("\n");
     }
 
+    public void setReader(BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    public BufferedReader getReader() {
+        return reader;
+    }
+
+    Comparator<LabWork> compareByName = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o1.getName().length() - o2.getName().length();
+        }
+    };
+
     //компаратор для сравнения элементов коллекции. В качестве элемента сравнения беру поле minimalPoint
     Comparator<LabWork> compareByMinPoint = new Comparator<LabWork>() {
         @Override
@@ -352,5 +447,6 @@ public class HelperController {
             return (int) (o1.getId() - o2.getId());
         }
     };
+
 
 }

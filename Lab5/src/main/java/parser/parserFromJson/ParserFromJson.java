@@ -18,9 +18,9 @@ public class ParserFromJson {
     public Root parse() throws IOException {
         Root root = new Root();
         JSONParser parser = new JSONParser();
-        File file = new File("Lab5/src/main/resources/notes.json");
+        File file = new File("notes.json");
         if (file.exists())
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream("notes.json"))) {
 
                 JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
@@ -58,8 +58,8 @@ public class ParserFromJson {
                 root.setLabWorkSet(labWorks);
 
                 return root;
-            } catch (IOException | ParseException e) {
-                file.createNewFile();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
             }
         return root;
     }
@@ -67,7 +67,7 @@ public class ParserFromJson {
     public boolean checkOnEmpty() throws IOException {
 
         try {
-            File file = new File("Lab5/src/main/resources/notes.json");
+            File file = new File("notes.json");
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             try {

@@ -11,9 +11,6 @@ public class Root {
     private ParserFromJson parser = new ParserFromJson();
     private HashSet<LabWork> labWorkSet = new HashSet<>();
 
-    private ParserFromJson getParser() {
-        return parser;
-    }
 
     public void setParser(ParserFromJson parser) {
         this.parser = parser;
