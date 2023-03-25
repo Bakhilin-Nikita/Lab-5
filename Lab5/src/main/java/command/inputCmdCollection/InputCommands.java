@@ -34,10 +34,11 @@ public class InputCommands {
         RemoveLower lower = new RemoveLower(removeLowerEl);
 
         UpdateCommand updateEl = new UpdateElementCommand(helperController);
-        UpdateId update = new UpdateId(updateEl);
+        Update update = new Update(updateEl);
 
         RemoveById removeEl = new RemoveById(helperController);
 
+        ExecuteScript executeScript = new ExecuteScript(helperController);
 
         //добавляем сюда все команды без входных элементов
         inputCommands.put(a.getCommandName(), a);
@@ -46,7 +47,7 @@ public class InputCommands {
         inputCommands.put(greater.getCommandName(), greater);
         inputCommands.put(lower.getCommandName(), lower);
         inputCommands.put(update.getCommandName(), update);
-
+        inputCommands.put(executeScript.getCOMMAND_NAME(), executeScript);
     }
 
     public Map<String, Invoker> getInputCommands() {

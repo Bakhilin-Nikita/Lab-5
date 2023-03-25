@@ -2,10 +2,10 @@
 
 
 import command.HelperController;
+import command.commands.ExecuteScript;
 import command.commands.Invoker;
 import command.commands.noInputCommands.Exit;
 import command.commands.noInputCommands.help.GetHelpCommand;
-import command.commands.noInputCommands.help.Help;
 import command.commands.noInputCommands.help.Information;
 import command.inputCmdCollection.InputCommands;
 import command.noInputCmdCollection.NoInputCommands;
@@ -15,18 +15,13 @@ import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import parser.parserToJson.ParserToJson;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class Controller {
@@ -38,7 +33,7 @@ public class Controller {
     Map<String, Invoker> inputCommands = new HashMap<>();
     private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов
     private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию
-    private ParserToJson parserToJson = new ParserToJson(); // Сериализация в json-файл
+
 
     private GetHelpCommand help = new GetHelpCommand(new Information()); // Экземпляр класса help
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); // поток ввода данных с консоли
@@ -47,6 +42,9 @@ public class Controller {
 
     private Root root;
 
+    private ExecuteScript executeScript;
+
+    private  ArrayList<String> paths = new ArrayList<>();
 
     /**
      * В конструкторе происходит автоматическая проверка json-файла.
@@ -59,8 +57,6 @@ public class Controller {
         if (parserFromJson.checkOnEmpty()) {
             root = parserFromJson.parse();
             labWorks = root.getLabWorkSet();
-
-            //parserToJson.serialization(labWorks);
         }
     }
 
@@ -72,16 +68,25 @@ public class Controller {
      * @throws IOException
      */
     public void start() throws IOException {
+        setExecuteScript(new ExecuteScript(getHelperController()));
         boolean flag = false;
         help.execute();
         while (!flag) {
-            String cmd = reformatCmd(reader.readLine()).trim();
-            if (cmd.equals(Exit.class.getSimpleName()))
-                flag = true;
-            //System.out.println("Command " + cmd);
+            String cmd = reformatCmd(reader.readLine());
+            String[] arr = cmd.split(" ", 2);
+            if (arr[0].equals("execute_script")) {
+                getExecuteScript().execute(arr[1]);
+            }
             searchCommandInCollection(cmd);
-
         }
+    }
+
+    public ArrayList<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(ArrayList<String> paths) {
+        this.paths = paths;
     }
 
     /**
@@ -89,84 +94,84 @@ public class Controller {
      * Цикл foreach проходит по каждому обьекту коллекции commandArrayList, чтобы найти нужную команду
      * Если команда не найдена, возвращается команда Help
      *
-     * @param command
-     *
+     * @param
      */
-    public void searchCommandInCollection(String command) throws FileNotFoundException {
+    public void searchCommandInCollection(String cmd) throws FileNotFoundException {
+
+        getHelperController().setReader(new BufferedReader(new InputStreamReader(System.in)));
+
         NoInputCommands noInputCommands = new NoInputCommands(helperController);
         setCommands(noInputCommands.getCommands());
 
         InputCommands inputCommands = new InputCommands(helperController);
         setInputCommands(inputCommands.getInputCommands());
 
-        // No input commands
-        for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
 
+
+
+       //  No input commands
+        for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
             String key = entry.getKey();
-            if (command.equals(key)) {
+            if (cmd.equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
-                entry.getValue().doCommand(command);
+                entry.getValue().doCommand(cmd);
             }
         }
 
         //если не было совпадений в первом мапе, пробегаемся по мапу команд с аргументами
         for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
-            String key = entry.getKey();
-            //String commandKey = command.replaceAll("\\d","");
-            String[] commandSplit = command.split(" ", 2);
-            if (commandSplit[0].equals(key)) {
-                System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
-                entry.getValue().doCommand(commandSplit[1]);
+            String commandKey = "";
+            String commandValue = "";
+            if (cmd.contains(" ")) {
+                String[] arr = cmd.split(" ", 2);
+
+                    commandKey = arr[0];
+                    commandValue = arr[1];
+
+            } else {
+                commandKey = cmd;
             }
-            //if (commandKey.equals(key)) {
-                //System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
-               // entry.getValue().doCommand(command);
-            //}
+            String key = entry.getKey();
+            //String commandKey = cmd.replaceAll("\\d","");
+            if (commandKey.equals(key)) {
+                System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
+                entry.getValue().doCommand(commandValue);
+            }
         }
-
     }
 
-    public String executeScript(String file_name) {
-        try {
-            return readFile(file_name, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return null;
-    }
 
-    public static String readFile(String path, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
-    }
 
-    public void setLabWorks(HashSet<LabWork> labWorks) {
-        this.labWorks = labWorks;
-    }
 
-    public Set<LabWork> getLabWorks() {
-        return labWorks;
-    }
+
 
     private String reformatCmd(String cmd) {
-        if (cmd.contains(" ")) {
-            String[] cmdSplit = cmd.split(" ", 2);
-            cmd = cmdSplit[0];
-            String data = cmdSplit[1];
-            cmd = reformation(cmd);
-            cmd = cmd + " " + data;
+        if (cmd != null && !checkOnExecuteScript(cmd)) {
+            if (cmd.contains(" ")) {
+                String[] arr = cmd.split(" ", 2);
+                cmd = arr[0].replaceAll("_", " ");
+                cmd = WordUtils.capitalize(cmd);
+                cmd = cmd.replaceAll(" ", "");
+                cmd = cmd.concat(" " + arr[1]);
+            } else {
+                cmd = cmd.replaceAll("_", " ");
+                cmd = WordUtils.capitalize(cmd);
+                cmd = cmd.replaceAll(" ", "");
+            }
         } else {
-            cmd = reformation(cmd);
+            return cmd;
         }
         return cmd;
     }
 
-    private static String reformation(String cmd){
-        cmd = cmd.replaceAll("_", " ");
-        cmd = WordUtils.capitalize(cmd).trim();
-        cmd = cmd.replaceAll(" ", "");
-        return cmd;
+    private boolean checkOnExecuteScript(String cmd) {
+        if (cmd != null) {
+            String[] arr = cmd.split(" ", 2);
+            return Objects.equals(arr[0], "execute_script");
+        }
+
+        return false;
     }
 
     public void setCommands(Map<String, Invoker> commands) {
@@ -183,5 +188,17 @@ public class Controller {
 
     public Map<String, Invoker> getInputCommands() {
         return inputCommands;
+    }
+
+    public HelperController getHelperController() {
+        return helperController;
+    }
+
+    public ExecuteScript getExecuteScript() {
+        return executeScript;
+    }
+
+    public void setExecuteScript(ExecuteScript executeScript) {
+        this.executeScript = executeScript;
     }
 }

@@ -4,11 +4,11 @@ import command.UpdateCommand;
 import command.commands.Invoker;
 
 //создаём инвокер - наследника класса Invoker
-public class UpdateId extends Invoker {
+public class Update extends Invoker {
     //задаём поле для команды
     public UpdateCommand updateEl;
 
-    private static final String COMMAND_NAME = UpdateId.class.getSimpleName();
+    private static final String COMMAND_NAME = Update.class.getSimpleName();
     //и, наконец, строка с регулярным выражением. Пока что это просто строка с такими вот символами, но в будущем...
     //Это нам будет нужно при вводе команд с параметром. Можешь посмотреть любую команду без аргументом, например, класс show - там regex = null
     //В данном случае шаблон говорит, что ждёт на вход строку типа "число-пробел-слово".
@@ -23,7 +23,7 @@ public class UpdateId extends Invoker {
         return regex;
     }
     //конструктор
-    public UpdateId(UpdateCommand updateEl) {
+    public Update(UpdateCommand updateEl) {
         this.updateEl = updateEl;
     }
     //А вот тут важное!

@@ -10,6 +10,7 @@ import object.enums.Color;
 import object.enums.Difficulty;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ public class ParserToJson {
         String result = gson.toJson(labs);
 
 
-        try (FileOutputStream out = new FileOutputStream("Lab5/src/main/resources/notes.json");
+        try (FileOutputStream out = new FileOutputStream("notes.json");
              BufferedOutputStream bos = new BufferedOutputStream(out)) {
             // перевод строки в байты
             byte[] buffer = result.getBytes();
