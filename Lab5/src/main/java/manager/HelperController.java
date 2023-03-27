@@ -1,40 +1,46 @@
-package command;
+package manager;
 
-import object.Coordinates;
 import object.LabWork;
-import object.Person;
+import object.*;
 import object.enums.Color;
 import object.enums.Difficulty;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import parser.parserToJson.ParserToJson;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.time.DateTimeException;
-import java.time.LocalDate;
+import java.io.*;
+import java.time.*;
 import java.util.*;
 
+/**
+ *
+ */
+
 public class HelperController {
-    private ParserFromJson parser = new ParserFromJson();
-    private Root root;
+    private Root root; // Не может быть null
+    private ArrayList<String> paths = new ArrayList<>(); // Не может быть null
+    private BufferedReader reader; // Не может быть null
 
-    private ArrayList<String> paths = new ArrayList<>();
-
-    private BufferedReader reader;
-
+    /**
+     * Конструктор создает объект который выгружает данные из файла в нашу переменную.
+     * Устанавливает директорию корневую.
+     */
     public HelperController() throws IOException {
         ParserFromJson parserFromJson = new ParserFromJson();
         this.root = parserFromJson.parse();
         this.reader = new BufferedReader(new InputStreamReader(System.in));
-        this.paths.add("/home/studs/s367870/");
+        this.paths.add(System.getProperty("user.dir"));
     }
 
+    /**
+     * Метод позволяет добавить в коллекцию путь которого еще не было в коллекции
+     * Относится к методу execute_script.
+     * Если пути еще не было вернет true, иначе false
+     * @param pathToFile
+     * @return
+     */
     public boolean addToPaths(String pathToFile) {
-        int j = 0;
-        pathToFile = "home/studs/s367870/"+pathToFile;
+        pathToFile = System.getProperty("user.dir")+"/"+pathToFile;
         for (int i = 0; i < getPaths().size(); i++) {
             if (Objects.equals(getPaths().get(i).trim(), pathToFile)) {
                 return false;
@@ -46,24 +52,17 @@ public class HelperController {
         return true;
     }
 
-    public ArrayList<String> getPaths() {
-        return paths;
-    }
 
-    public void setPaths(ArrayList<String> paths) {
-        this.paths = paths;
-    }
-
-    public Root getRoot() {
-        return root;
-    }
-
-
-    //Обновить элемент. Возможно, буду дорабатывать этот метод
+    /**
+     * Метод обновляет объект который находится в коллекции, по его id
+     * При это не изменяя его id.
+     * Цикл for прогоняется по коллекции, если id найдено, то меняем поля.
+     * @param id
+     * @throws IOException
+     * @throws ParseException
+     */
     public void update(int id) throws IOException, ParseException {
         boolean flag = true;
-
-
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
                 System.out.println("Введите название Лабараторной работы: ");
@@ -74,7 +73,6 @@ public class HelperController {
                 int tunedInWorks = addTunedInWorks();
                 Difficulty difficulty = addDifficulty();
                 LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
-
 
                 lab.setName(e.getName());
                 lab.setAuthor(e.getAuthor());
@@ -90,12 +88,12 @@ public class HelperController {
         if (flag) {
             System.out.println("Элемент с данным ID отсутствует!");
         }
-
-        for (LabWork lab : getRoot().getLabWorkSet())
-            System.out.println("Author name: " + lab.getAuthor().getName());
     }
 
-
+    /**
+     * Метод показывает все элементы коллекции.
+     * Сортируя их по id
+     */
     public void show() {
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(getRoot().getLabWorkSet());
@@ -111,7 +109,10 @@ public class HelperController {
 
     }
 
-    //доп. метод для команды info (ниже)
+    /**
+     * Дополнительный метод для {@link #getInfo()}
+     * @return
+     */
     private LocalDate getCreationDate() {
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(getRoot().getLabWorkSet());
@@ -119,7 +120,9 @@ public class HelperController {
         return minimum.getCreationDate().toLocalDate();
     }
 
-    //Метод info: получение информации о коллекции
+    /**
+     * Метод info: получение информации о коллекции
+     */
     public void getInfo() {
         if (getRoot().getLabWorkSet().isEmpty()) {
             System.out.println("Информация по коллекции не найдена! Возможно она удаленна.");
@@ -130,23 +133,26 @@ public class HelperController {
         }
     }
 
-    //Удалить из коллекции все элементы, превышающие заданный
+    /**
+     * Метод удаляет из коллекции все элементы, превышающие заданный.
+     * @param e
+     */
     public void removeGreater(String e) {
-        List<LabWork> labWorkList = new ArrayList<>();
-        labWorkList.addAll(getRoot().getLabWorkSet());
+        List<LabWork> labWorkList = new ArrayList<>(getRoot().getLabWorkSet());
         labWorkList.sort(compareByMinPointReverse);
-
         for (LabWork el : labWorkList) {
             if (el.getName().equals(e)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
         }
-
         System.out.println("Все элементы выше данного, были удаленны.");
     }
 
-    //Удалить из коллекции все элементы, меньшие, чем заданный
+    /**
+     * Метод удаляет все элементы меньшие чем заданный.
+     * @param e
+     */
     public void removeLower(String e) {
         List<LabWork> labWorkList = new ArrayList<>();
         labWorkList.addAll(getRoot().getLabWorkSet());
@@ -162,7 +168,9 @@ public class HelperController {
         System.out.println("Все элементы меньше данного были удалены.");
     }
 
-    //Удалить элемент из коллекции
+    /**
+     * Метод удаляет элемент коллекции по id.
+     */
     public void removeEl(int id) {
         int flag = 0;
         for (LabWork lab : getRoot().getLabWorkSet()) {
@@ -178,7 +186,16 @@ public class HelperController {
         }
     }
 
-    //Добавить элемент в коллекцию
+    /**
+     * Метод добавляет элемент в коллекцию
+     * @see #addCoordinates()
+     * @see #addCoordinates()
+     * @see #addMinimalPoint()
+     * @see #addTunedInWorks()
+     * @see #addPerson()
+     * @throws IOException
+     * @throws ParseException
+     */
     public void addElement() throws IOException, ParseException {
         System.out.println("Введите название Лабараторной работы: ");
         String name = reader.readLine();
@@ -196,6 +213,10 @@ public class HelperController {
             System.out.println("К сожалению, что-то пошло не так. Попробуйте еще раз!");
     }
 
+    /**
+     * Метод генерирует id нового объекта
+     * @return
+     */
     public int generateId() {
         Map<Integer, LabWork> labs = new HashMap<>();
         for (LabWork lab : getRoot().getLabWorkSet())
@@ -204,17 +225,25 @@ public class HelperController {
         return labs.size() + 1;
     }
 
+    /**
+     * Сортирует коллекцию объектов по ключу.
+     * @param unsortedMap
+     * @return
+     * @param <K>
+     * @param <V>
+     */
     public <K, V> Map<K, V> sortByKeys(Map<K, V> unsortedMap) {
         return new TreeMap<>(unsortedMap);
     }
 
-    private int addMinimalPoint() throws IOException {
-        System.out.println("Введите minimalPoint:");
-        int minimalPoint = checkOnInt();
-        return minimalPoint;
-    }
 
-    //Добавить элемент в коллекцию, если он больше остальных. Сравниваю по minimalPoint
+
+    /**
+     * Добавить элемент в коллекцию, если он больше остальных. Сравнивая по {@link LabWork#minimalPoint}
+     * @param name
+     * @throws IOException
+     * @throws ParseException
+     */
     public void addIfMax(String name) throws IOException, ParseException {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
@@ -228,14 +257,53 @@ public class HelperController {
         }
     }
 
-    //Доп метод для add: добавить tunedInWorks
+    /**
+     * Метод обрабатывает поле {@link LabWork#tunedInWorks}
+     * Дополнительный метод для {@link #addElement()}
+     * @return
+     */
     private int addTunedInWorks() {
-        System.out.println("Введите tuned in works:");
-        int tunedInWorks = checkOnInt();
+        int tunedInWorks = 0;
+        boolean flag = false;
+        while(!flag) {
+            System.out.println("Введите tunedInWorks:");
+            System.out.println("Введите tunedInWorks:");
+            tunedInWorks = checkOnInt();
+            if (tunedInWorks > 1 && tunedInWorks < 1000)
+                flag = true;
+            else
+                System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
+        }
+
         return tunedInWorks;
     }
 
-    //Доп метод для add: добавить координаты
+    /**
+     * Метод обрабатывает поле {@link LabWork#minimalPoint}
+     * Дополнительный метод для {@link #addElement()}
+     * @return
+     */
+    private int addMinimalPoint() {
+        int minimalPoint = 0;
+        boolean flag = false;
+        while(!flag) {
+            System.out.println("Введите minimalPoint:");
+            minimalPoint = checkOnInt();
+            if (minimalPoint > 1 && minimalPoint < 1000)
+                flag = true;
+            else
+                System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
+        }
+
+        return minimalPoint;
+    }
+
+    /**
+     * Метод обрабатывает поле {@link LabWork#coordinates}
+     * Дополнительный метод для {@link #addElement()}
+     * @return
+     * @throws IOException
+     */
     private Coordinates addCoordinates() throws IOException {
         System.out.println("Введите координату x:");
         int x = checkOnInt();
@@ -245,6 +313,78 @@ public class HelperController {
         return new Coordinates(x, y);
     }
 
+    /**
+     * Метод сохраняет коллекцию в файл.
+     */
+    public void save() {
+        ParserToJson parserToJson = new ParserToJson();
+
+        if (parserToJson.serialization(getRoot().getLabWorkSet()))
+            System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
+        else
+            System.out.println("Что-то пошлое не так :(");
+    }
+
+    /**
+     * Доп метод для {@link #addElement()}: добавить сложность
+     * @return
+     * @throws IOException
+     */
+    private Difficulty addDifficulty() throws IOException {
+        System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
+        String difficulty = checkOnEnum(Difficulty.class);
+        return Difficulty.valueOf(difficulty);
+    }
+
+
+    /**
+     * Доп метод для {@link #addElement()}: добавить автора
+     * @return
+     * @throws IOException
+     */
+    private Person addPerson() throws IOException {
+        System.out.println("Введите имя автора: ");
+        String name = reader.readLine();
+
+        boolean flag = false;
+        float height = 0;
+        while(!flag) {
+            System.out.println("Введите рост автора: ");
+            float h = checkOnFloat();
+            if (h > 67.08 && h < 272) {
+                flag = true;
+                height = checkOnFloat();
+            }else {
+                System.out.println("Вы ввели неправильный рост!");}
+        }
+
+        String date = null;
+        LocalDate birthday = null;
+        while (date == null) {
+            try {
+                System.out.println("Введите дату рождения автора (гггг-мм-дд): ");
+                birthday = LocalDate.parse(reader.readLine());
+                String[] dateSplit = birthday.toString().split("-");
+                if (Integer.parseInt(dateSplit[0]) >= 1907 && Integer.parseInt(dateSplit[0]) < 2015)
+                    date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
+                else
+                    System.out.println("Ты не мог родиться в такой год. Самый старый человек родился в 1907 году.Мария Браньяс Морера");
+            } catch (DateTimeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
+
+        String color = checkOnEnum(Color.class);
+
+        return new Person(name, Color.valueOf(color), height, date);
+    }
+
+    /**
+     * Метод проверяет является ли число типом {@link Double}
+     * @return
+     */
     private double checkOnDouble() {
         double y = 0;
         boolean flag = false;
@@ -260,6 +400,10 @@ public class HelperController {
         return y;
     }
 
+    /**
+     * Метод проверяет является ли число типом {@link Integer}
+     * @return
+     */
     private int checkOnInt() {
         int y = 0;
         boolean flag = false;
@@ -273,48 +417,10 @@ public class HelperController {
         return y;
     }
 
-    public void save() {
-        ParserToJson parserToJson = new ParserToJson();
-
-        if (parserToJson.serialization(getRoot().getLabWorkSet()))
-            System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
-        else
-            System.out.println("Что-то пошлое не так :(");
-    }
-
-    //Доп метод для add: добавить сложность
-    private Difficulty addDifficulty() throws IOException {
-        System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
-        String difficulty = checkOnEnum(Difficulty.class);
-        return Difficulty.valueOf(difficulty);
-    }
-
-
-    //Доп метод для add: добавить автора
-    private Person addPerson() throws IOException {
-        System.out.println("Введите имя автора: ");
-        String name = reader.readLine();
-        System.out.println("Введите рост автора: ");
-        float height = checkOnFloat();
-        String date = null;
-        LocalDate birthday = null;
-        while (birthday == null) {
-            try {
-                System.out.println("Введите дату рождения автора (гггг-мм-дд): ");
-                birthday = LocalDate.parse(reader.readLine());
-                String[] dateSplit = birthday.toString().split("-");
-                date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
-            } catch (DateTimeException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
-        String color = checkOnEnum(Color.class);
-
-        return new Person(name, Color.valueOf(color), height, date);
-    }
-
+    /**
+     * Метод проверяет является ли число типом {@link Enum}
+     * @return
+     */
     private String checkOnEnum(Class className) {
         boolean flag = false;
         String enumValue = null;
@@ -331,6 +437,10 @@ public class HelperController {
         return enumValue;
     }
 
+    /**
+     * Метод проверяет является ли число типом {@link Float}
+     * @return
+     */
     private float checkOnFloat() {
         float y = 0;
         boolean flag = false;
@@ -347,14 +457,18 @@ public class HelperController {
         return y;
     }
 
-    //Очистить коллекцию
+    /**
+     * Метод производит очистку коллекции.
+     */
     public void clearCollection() {
         getRoot().getLabWorkSet().clear();
         if (getRoot().getLabWorkSet().isEmpty())
             System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " очищена!");
     }
 
-    //Вывести максимального автора. Я хрен знает, как сравнить авторов, поэтому их сравнивают по имени.
+    /**
+     * Сравнение авторов по имени, вывод максимального.
+     */
     public void maxByAuthor() {
         List<Person> authors = new ArrayList<>();
 
@@ -378,7 +492,9 @@ public class HelperController {
         }
     }
 
-    //Вывести уникальные значения tunedInWorks
+    /**
+     * Вывести уникальные значения tunedInWorks
+     */
     public void printUniqueTunedInWorks() {
         Set<Integer> unique = new HashSet<>();
         for (LabWork lab : getRoot().getLabWorkSet()) {
@@ -389,12 +505,17 @@ public class HelperController {
         System.out.println("\n");
     }
 
-    //Доп метод для вывода коллекции элементов (используется в команде выше)
+    /**
+     * Доп метод для вывода коллекции элементов в {@link #printFieldAscendingTunedInWorks()}
+     * @param collection
+     */
     private void printCollection(Collection<Integer> collection) {
         collection.forEach(System.out::println);
     }
 
-    //Вывести значения tunedInWorks в порядке возрастания
+    /**
+     * Вывести значения {@link LabWork#tunedInWorks} в порядке возрастания
+     */
     public void printFieldAscendingTunedInWorks() {
         List<Integer> tunedInWorks = new LinkedList<>();
         for (LabWork lab : getRoot().getLabWorkSet()) {
@@ -409,13 +530,7 @@ public class HelperController {
         System.out.println("\n");
     }
 
-    public void setReader(BufferedReader reader) {
-        this.reader = reader;
-    }
 
-    public BufferedReader getReader() {
-        return reader;
-    }
 
     Comparator<LabWork> compareByName = new Comparator<LabWork>() {
         @Override
@@ -448,5 +563,23 @@ public class HelperController {
         }
     };
 
+    public ArrayList<String> getPaths() {
+        return paths;
+    }
 
+    public void setPaths(ArrayList<String> paths) {
+        this.paths = paths;
+    }
+
+    public Root getRoot() {
+        return root;
+    }
+
+    public void setReader(BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    public BufferedReader getReader() {
+        return reader;
+    }
 }

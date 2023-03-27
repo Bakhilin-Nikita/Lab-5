@@ -1,7 +1,7 @@
 package command.commands.noInputCommands;
 
 import command.Command;
-import command.HelperController;
+import manager.HelperController;
 
 public class PrintSortedTiWCommand implements Command {
     private HelperController helperController;

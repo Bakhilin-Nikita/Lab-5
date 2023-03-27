@@ -1,9 +1,7 @@
 package command.commands.noInputCommands;
 
 import command.Command;
-import command.HelperController;
-import command.commands.noInputCommands.help.Help;
-import parser.Root;
+import manager.HelperController;
 
 public class GetInfoCommand implements Command {
     private HelperController helperController;

@@ -2,8 +2,7 @@ package command.commands.noInputCommands;
 
 
 import command.Command;
-import command.HelperController;
-import parser.Root;
+import manager.HelperController;
 
 public class ShowTheCollectionCommand implements Command {
     private HelperController helperController;

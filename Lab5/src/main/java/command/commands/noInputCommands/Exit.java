@@ -1,9 +1,7 @@
 package command.commands.noInputCommands;
 
-import command.HelperController;
-import command.commands.ExecuteScript;
+import manager.HelperController;
 import command.commands.Invoker;
-import command.commands.noInputCommands.help.Help;
 
 public class Exit extends Invoker {
     private static final String COMMAND_NAME = Exit.class.getSimpleName();

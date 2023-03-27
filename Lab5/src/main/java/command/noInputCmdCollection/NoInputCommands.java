@@ -1,7 +1,7 @@
 package command.noInputCmdCollection;
 
 import command.Command;
-import command.HelperController;
+import manager.HelperController;
 import command.commands.*;
 import command.commands.noInputCommands.*;
 import command.commands.noInputCommands.ShowTheCollectionCommand;

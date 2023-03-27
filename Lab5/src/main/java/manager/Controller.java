@@ -1,50 +1,28 @@
-// управляет всеми командами этого приложения
+package manager;// управляет всеми командами этого приложения
 
 
-import command.HelperController;
-import command.commands.ExecuteScript;
-import command.commands.Invoker;
-import command.commands.noInputCommands.Exit;
-import command.commands.noInputCommands.help.GetHelpCommand;
-import command.commands.noInputCommands.help.Information;
-import command.inputCmdCollection.InputCommands;
+import command.commands.*;
+import command.commands.noInputCommands.help.*;
+import command.inputCmdCollection.*;
 import command.noInputCmdCollection.NoInputCommands;
 import object.LabWork;
 import org.apache.commons.lang3.text.WordUtils;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
-import parser.parserToJson.ParserToJson;
-
 import java.io.*;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
-
 public class Controller {
+    private Map<String, Invoker> commands = new HashMap<>(); // Map для команд БЕЗ входных данных, не может быть null
+    private Map<String, Invoker> inputCommands = new HashMap<>(); // Map для команд С входными данными, не может быть null
+    private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов, не может быть null
+    private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию. Не может быть null
+    private GetHelpCommand help = new GetHelpCommand(new Information()); // Не может быть null
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));  // Не может быть null
+    private HelperController helperController = new HelperController(); // Не может быть null
+    private Root root; // Не может быть null
+    private ExecuteScript executeScript; // Не может быть null
 
-    // Этот мап для команд БЕЗ входных данных
-    Map<String, Invoker> commands = new HashMap<>();
-
-    //А этот мап для команд С входными данными
-    Map<String, Invoker> inputCommands = new HashMap<>();
-    private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов
-    private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию
-
-
-    private GetHelpCommand help = new GetHelpCommand(new Information()); // Экземпляр класса help
-    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); // поток ввода данных с консоли
-
-    private HelperController helperController = new HelperController();
-
-    private Root root;
-
-    private ExecuteScript executeScript;
-
-    private  ArrayList<String> paths = new ArrayList<>();
 
     /**
      * В конструкторе происходит автоматическая проверка json-файла.
@@ -64,7 +42,7 @@ public class Controller {
      * Самый главный метод класса, а может и всей программы.
      * Сперва в методе запускается статический метод help.execute
      * Переменная flag нужна чтобы контролировать цикл while
-     *
+     * Проверяется наличие execute_script на вводе
      * @throws IOException
      */
     public void start() throws IOException {
@@ -81,18 +59,10 @@ public class Controller {
         }
     }
 
-    public ArrayList<String> getPaths() {
-        return paths;
-    }
-
-    public void setPaths(ArrayList<String> paths) {
-        this.paths = paths;
-    }
 
     /**
      * В параметры метода передается переменная типа String
      * Цикл foreach проходит по каждому обьекту коллекции commandArrayList, чтобы найти нужную команду
-     * Если команда не найдена, возвращается команда Help
      *
      * @param
      */
@@ -107,9 +77,7 @@ public class Controller {
         setInputCommands(inputCommands.getInputCommands());
 
 
-
-
-       //  No input commands
+        //  No input commands
         for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
             String key = entry.getKey();
             if (cmd.equals(key)) {
@@ -120,19 +88,18 @@ public class Controller {
 
         //если не было совпадений в первом мапе, пробегаемся по мапу команд с аргументами
         for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
-            String commandKey = "";
             String commandValue = "";
+            String commandKey = "";
             if (cmd.contains(" ")) {
                 String[] arr = cmd.split(" ", 2);
 
-                    commandKey = arr[0];
-                    commandValue = arr[1];
+                commandKey = arr[0];
+                commandValue = arr[1];
 
             } else {
                 commandKey = cmd;
             }
             String key = entry.getKey();
-            //String commandKey = cmd.replaceAll("\\d","");
             if (commandKey.equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
                 entry.getValue().doCommand(commandValue);
@@ -140,12 +107,11 @@ public class Controller {
         }
     }
 
-
-
-
-
-
-
+    /**
+     * Метод форматирует введенные данные, и преобразовывает в нужную форму.
+     * @param cmd
+     * @return
+     */
     private String reformatCmd(String cmd) {
         if (cmd != null && !checkOnExecuteScript(cmd)) {
             if (cmd.contains(" ")) {
@@ -165,6 +131,10 @@ public class Controller {
         return cmd;
     }
 
+    /**
+     * Метод проверяет наличие в введенных данных команду execute_script
+     * Если execute_script, то выкидывается true, иначе false.
+     */
     private boolean checkOnExecuteScript(String cmd) {
         if (cmd != null) {
             String[] arr = cmd.split(" ", 2);

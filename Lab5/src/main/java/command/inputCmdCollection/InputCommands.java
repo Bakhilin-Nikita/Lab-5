@@ -1,7 +1,7 @@
 package command.inputCmdCollection;
 
 import command.ElementCommand;
-import command.HelperController;
+import manager.HelperController;
 import command.UpdateCommand;
 import command.commands.*;
 import command.commands.inputCommands.*;
@@ -14,7 +14,7 @@ public class InputCommands {
     private Map<String, Invoker> inputCommands = new HashMap<>();
     private HelperController helperController;
 
-    //private HelperController helperController = new HelperController();
+    //private manager.HelperController helperController = new manager.HelperController();
 
     public InputCommands(HelperController helperController) throws FileNotFoundException {
         this.helperController = helperController;

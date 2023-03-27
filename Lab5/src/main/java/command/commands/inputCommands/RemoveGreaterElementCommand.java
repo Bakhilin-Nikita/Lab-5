@@ -2,7 +2,7 @@ package command.commands.inputCommands;
 
 
 import command.ElementCommand;
-import command.HelperController;
+import manager.HelperController;
 
 public class RemoveGreaterElementCommand implements ElementCommand {
     private HelperController helperController;

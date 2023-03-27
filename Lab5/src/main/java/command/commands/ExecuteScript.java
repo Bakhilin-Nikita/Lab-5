@@ -1,6 +1,6 @@
 package command.commands;
 
-import command.HelperController;
+import manager.HelperController;
 import command.inputCmdCollection.InputCommands;
 import command.noInputCmdCollection.NoInputCommands;
 import org.apache.commons.lang3.text.WordUtils;
@@ -39,7 +39,8 @@ public class ExecuteScript extends Invoker {
 
 
     public void execute(String pathToFile) throws IOException {
-        pathToFile = "/home/studs/s367870/" + pathToFile;
+        pathToFile = System.getProperty("user.dir")+"/" + pathToFile;
+        System.out.println(pathToFile);
         if (new File(pathToFile).exists()) {
             // настраиваем поток ввода
             getHelperController().setReader(new BufferedReader(new InputStreamReader(new FileInputStream(pathToFile))));

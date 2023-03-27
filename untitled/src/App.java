@@ -1,11 +1,21 @@
-import java.util.Scanner;
+import javax.management.ObjectName;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class App {
     public static void main(String args[]) {
-        String cmd = "add_if_max 5";
-        String[] arr = cmd.split(" ", 2);
-        cmd = cmd.replaceAll("_", " ");
-        cmd = WordUtils.capitalize(cmd).trim();
-        cmd = cmd.replaceAll(" ", "");
+        String[] arrCity = {"Astrakhan", "Moscow", "Chicago"};
+
+        ArrayList<String> states = new ArrayList<String>();
+        states.add("Germany");
+        states.add("France");
+        states.add("Italy");
+        states.add("Spain");
+
+        for (String state : states) System.out.println(state);
+
     }
 }

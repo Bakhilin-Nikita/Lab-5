@@ -2,8 +2,7 @@ package command.commands.inputCommands;
 
 
 import command.ElementCommand;
-import command.HelperController;
-import parser.Root;
+import manager.HelperController;
 
 public class RemoveLowerElementCommand implements ElementCommand {
     private HelperController helperController;

@@ -1,10 +1,8 @@
 package command.commands.inputCommands;
 
 
-import command.HelperController;
+import manager.HelperController;
 import command.UpdateCommand;
-import command.commands.noInputCommands.help.Help;
-import parser.Root;
 
 import java.io.IOException;
 import java.text.ParseException;

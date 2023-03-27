@@ -1,6 +1,6 @@
 package command.commands.inputCommands;
 
-import command.HelperController;
+import manager.HelperController;
 import command.commands.Invoker;
 
 public class RemoveById extends Invoker {
