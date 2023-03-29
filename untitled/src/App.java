@@ -7,15 +7,13 @@ import java.util.Iterator;
 
 public class App {
     public static void main(String args[]) {
-        String[] arrCity = {"Astrakhan", "Moscow", "Chicago"};
-
-        ArrayList<String> states = new ArrayList<String>();
-        states.add("Germany");
-        states.add("France");
-        states.add("Italy");
-        states.add("Spain");
-
-        for (String state : states) System.out.println(state);
-
+        ArrayList<String> arrayList = new ArrayList();
+        arrayList.add("A");
+        arrayList.add("B");
+        int i = 0;
+        while (arrayList.iterator().hasNext()) {
+            System.out.println(arrayList.get(i));
+            i++;
+        }
     }
 }

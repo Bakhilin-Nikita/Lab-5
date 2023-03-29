@@ -606,4 +606,17 @@ public class HelperController {
     public BufferedReader getReader() {
         return reader;
     }
+
+    @Override
+    public String toString() {
+        return "HelperController{" +
+                "root=" + root +
+                ", paths=" + paths +
+                ", reader=" + reader +
+                ", compareByName=" + compareByName +
+                ", compareByMinPoint=" + compareByMinPoint +
+                ", compareByMinPointReverse=" + compareByMinPointReverse +
+                ", compareByID=" + compareByID +
+                '}';
+    }
 }

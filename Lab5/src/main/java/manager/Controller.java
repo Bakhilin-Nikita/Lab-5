@@ -178,4 +178,19 @@ public class Controller {
     public void setExecuteScript(ExecuteScript executeScript) {
         this.executeScript = executeScript;
     }
+
+    @Override
+    public String toString() {
+        return "Controller{" +
+                "commands=" + commands +
+                ", inputCommands=" + inputCommands +
+                ", labWorks=" + labWorks +
+                ", parserFromJson=" + parserFromJson +
+                ", help=" + help +
+                ", reader=" + reader +
+                ", helperController=" + helperController +
+                ", root=" + root +
+                ", executeScript=" + executeScript +
+                '}';
+    }
 }
