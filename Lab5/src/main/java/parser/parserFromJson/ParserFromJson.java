@@ -14,7 +14,18 @@ import parser.Root;
 import java.io.*;
 import java.util.HashSet;
 
+/**
+ * Метод парсит данные из json файла в коллекцию {@link Root#labWorkSet}
+ * Ключевой метод для работы с коллекцией.
+ */
+
 public class ParserFromJson {
+
+    /**
+     * Метод обращается к файлу notes.json, использует его в качестве базы данных объектов.
+     * @return
+     * @throws IOException
+     */
     public Root parse() throws IOException {
         Root root = new Root();
         JSONParser parser = new JSONParser();
@@ -30,9 +41,9 @@ public class ParserFromJson {
 
                     // at the first parsing primitive type of json file
                     long id = (Long) labJsonObject.get("id");
-                    String name = (String) labJsonObject.get("name");
                     long minimalPoint = (Long) labJsonObject.get("minimalPoint");
                     long tunedInWorks = (Long) labJsonObject.get("tunedInWorks");
+                    String name = (String) labJsonObject.get("name");
                     String creationDate = (String) labJsonObject.get("creationDateString");
                     String difficulty = (String) labJsonObject.get("difficulty");
 
@@ -52,7 +63,6 @@ public class ParserFromJson {
                     LabWork labWork = new LabWork((int) id, name, (int) minimalPoint, (int) tunedInWorks, Difficulty.valueOf(difficulty), new Coordinates((int) x, y), new Person(nameAuthor, Color.valueOf(color), height, dataBirthday), creationDate);
 
                     labWorks.add(labWork);
-
                 }
 
                 root.setLabWorkSet(labWorks);
@@ -64,7 +74,12 @@ public class ParserFromJson {
         return root;
     }
 
-    public boolean checkOnEmpty() throws IOException {
+
+    /**
+     * Метод проверяет есть ли в файле обьекты коллекции.
+     * @return boolean
+     */
+    public boolean checkOnEmpty() {
 
         try {
             File file = new File("notes.json");

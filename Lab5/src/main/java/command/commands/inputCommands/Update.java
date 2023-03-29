@@ -31,17 +31,11 @@ public class Update extends Invoker {
     // Обычно достаточно просто ввести [имя команды].execute(s), но тут особый случай.
     @Override
     public void doCommand(String id) {
-        //Допустим, на вход пришла команда "update 3 Kulinich228"
-        //В App я прописал, как работает алгоритм.
-        //По итогу, на вход метода doCommand подаётся строка "3 Kulinich228"
-        //Аргумент 1, а нам нужно 2 - id и имя элемента. Поэтому бьём строку надвое.
-        //String[] strings = s.split(" ");
-        //Первую часть с id мы преобразуем в число, вторую оставляем строкой
-        //int id = Integer.parseInt(strings[0].trim());
-        //String field = strings[strings.length-1];
-        // выполняем команду
+        int i = -1;
 
-        int i = Integer.parseInt(id.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
+        if (!id.isEmpty())
+            i = Integer.parseInt(id.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
+
         updateEl.execute(i);
     }
 }

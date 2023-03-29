@@ -2,14 +2,18 @@ package parser;
 
 import object.LabWork;
 import parser.parserFromJson.ParserFromJson;
-
 import java.util.HashSet;
 
+/**
+ * Ключевой класс парсинга в json.
+ * @see parser.parserToJson.ParserToJson
+ * @see ParserFromJson
+ */
 
 public class Root {
 
-    private ParserFromJson parser = new ParserFromJson();
-    private HashSet<LabWork> labWorkSet = new HashSet<>();
+    private ParserFromJson parser = new ParserFromJson(); // не может быть null
+    private HashSet<LabWork> labWorkSet = new HashSet<>(); // не мохет быть null
 
 
     public void setParser(ParserFromJson parser) {

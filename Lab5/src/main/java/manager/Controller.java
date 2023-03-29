@@ -1,5 +1,4 @@
-package manager;// управляет всеми командами этого приложения
-
+package manager;
 
 import command.commands.*;
 import command.commands.noInputCommands.help.*;
@@ -11,6 +10,11 @@ import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import java.io.*;
 import java.util.*;
+
+/**
+ * @see Controller нужен для вызова команд. Из него уже происходит вся работа программы.
+ * Ключевой класс программы.
+ */
 
 public class Controller {
     private Map<String, Invoker> commands = new HashMap<>(); // Map для команд БЕЗ входных данных, не может быть null
@@ -56,6 +60,9 @@ public class Controller {
                 getExecuteScript().execute(arr[1]);
             }
             searchCommandInCollection(cmd);
+
+            System.out.println("---------------------");
+            System.out.println("? Если возникли трудности, введите команду help");
         }
     }
 

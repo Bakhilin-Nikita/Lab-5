@@ -1,31 +1,30 @@
 package command.commands;
 
-import manager.HelperController;
 import command.inputCmdCollection.InputCommands;
 import command.noInputCmdCollection.NoInputCommands;
+import manager.HelperController;
 import org.apache.commons.lang3.text.WordUtils;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+/**
+ * @see ExecuteScript исполняет доступные команды из файла.
+ */
 
 public class ExecuteScript extends Invoker {
-    private static final String COMMAND_NAME = ExecuteScript.class.getSimpleName();
-
-    private HelperController helperController;
-    Map<String, Invoker> commands = new HashMap<>();
-
-    //А этот мап для команд С входными данными
-    Map<String, Invoker> inputCommands = new HashMap<>();
+    private static final String COMMAND_NAME = ExecuteScript.class.getSimpleName(); // Название команды
+    private HelperController helperController; // Это поле не может быть null
+    Map<String, Invoker> commands = new HashMap<>();  // А этот мап для команд без входных данных
+    Map<String, Invoker> inputCommands = new HashMap<>();  // А этот мап для команд С входными данными
 
 
+    /**
+     * Метод инициализирует {@link #helperController}
+     * @param helperController
+     */
     public ExecuteScript(HelperController helperController) {
         this.helperController = helperController;
-    }
-
-    public static String getCOMMAND_NAME() {
-        return COMMAND_NAME;
     }
 
     @Override
@@ -38,8 +37,15 @@ public class ExecuteScript extends Invoker {
     }
 
 
+    /**
+     * Метод ищет файл из которого нужно исполнить скрипт.
+     * Блокирует любого вида рекурсию.
+     * @param pathToFile
+     * @throws IOException
+     */
+
     public void execute(String pathToFile) throws IOException {
-        pathToFile = System.getProperty("user.dir")+"/" + pathToFile;
+        pathToFile = System.getProperty("user.dir") + "/" + pathToFile;
         System.out.println(pathToFile);
         if (new File(pathToFile).exists()) {
             // настраиваем поток ввода
@@ -54,8 +60,6 @@ public class ExecuteScript extends Invoker {
 
             // читаем первую строку из файла
             String cmd = getHelperController().getReader().readLine();
-
-            boolean flag = false;
 
             if (cmd != null) {
                 while (cmd != null) {
@@ -78,25 +82,26 @@ public class ExecuteScript extends Invoker {
                             }
                         }
                     } else {
-                            String[] command = cmd.split(" ", 2);
-                            if (command[0].equals("execute_script")) {
-                                if (getHelperController().addToPaths(command[1])) {
-                                    doCommand(command[1]);
-                                    getHelperController().addToPaths(command[1]);
-                                } else {
-                                    System.out.println("ты не сможешь сломать её!");
-                                }
+                        cmd = reformatCmd(cmd);
+                        String[] command = cmd.split(" ", 2);
+                        if (command[0].equals("ExecuteScript")) {
+                            if (getHelperController().addToPaths(command[1])) {
+                                doCommand(command[1]);
+                                getHelperController().addToPaths(command[1]);
                             } else {
-                                for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
-                                    String key = entry.getKey();
-                                    String commandKey = command[0];
-                                    String commandValue = command[1];
-                                    if (commandKey.equals(key)) {
-                                        System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
-                                        entry.getValue().doCommand(commandValue);
-                                    }
+                                System.out.println("ты не сможешь сломать её!");
+                            }
+                        } else {
+                            for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
+                                String key = entry.getKey();
+                                String commandKey = command[0];
+                                String commandValue = command[1];
+                                if (commandKey.equals(key)) {
+                                    System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
+                                    entry.getValue().doCommand(commandValue);
                                 }
                             }
+                        }
                     }
                     cmd = this.helperController.getReader().readLine();
                 }
@@ -104,6 +109,9 @@ public class ExecuteScript extends Invoker {
         } else {
             System.out.println("Файл не найден!");
         }
+
+        // Очищаем коллекцию путей
+        getHelperController().getPaths().clear();
     }
 
 
@@ -121,15 +129,6 @@ public class ExecuteScript extends Invoker {
             cmd = cmd.replaceAll(" ", "");
         }
         return cmd;
-    }
-
-    private boolean checkOnExecuteScript(String cmd) {
-        if (cmd != null) {
-            String[] arr = cmd.split(" ", 2);
-            return Objects.equals(arr[0], "execute_script");
-        }
-
-        return false;
     }
 
     public HelperController getHelperController() {
@@ -154,5 +153,9 @@ public class ExecuteScript extends Invoker {
 
     public void setCommands(Map<String, Invoker> commands) {
         this.commands = commands;
+    }
+
+    public static String getCOMMAND_NAME() {
+        return COMMAND_NAME;
     }
 }

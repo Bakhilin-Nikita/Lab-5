@@ -1,22 +1,25 @@
 package parser.parserToJson;
 
 import com.google.gson.Gson;
-import exceptions.InvalidFieldY;
-import exceptions.NullX;
-import object.Coordinates;
 import object.LabWork;
-import object.Person;
-import object.enums.Color;
-import object.enums.Difficulty;
-
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 
+/**
+ * Важный класс. Нужен для парсинга в json файл.
+ * Без этого класса, программа не сможет функционировать.
+ */
+
 public class ParserToJson {
 
+    /**
+     * Метод превращает коллекцию в строку переменной result
+     * Если запись произошла усмешно, то вернется true, иначе false.
+     * @param labs
+     * @return
+     */
     public boolean serialization(HashSet<LabWork> labs) {
         Gson gson = new Gson();
 

@@ -1,15 +1,20 @@
 package manager;
 
+import object.Coordinates;
 import object.LabWork;
-import object.*;
+import object.Person;
 import object.enums.Color;
 import object.enums.Difficulty;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import parser.parserToJson.ParserToJson;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.io.*;
-import java.time.*;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -36,11 +41,12 @@ public class HelperController {
      * Метод позволяет добавить в коллекцию путь которого еще не было в коллекции
      * Относится к методу execute_script.
      * Если пути еще не было вернет true, иначе false
+     *
      * @param pathToFile
      * @return
      */
     public boolean addToPaths(String pathToFile) {
-        pathToFile = System.getProperty("user.dir")+"/"+pathToFile;
+        pathToFile = System.getProperty("user.dir") + "/" + pathToFile;
         for (int i = 0; i < getPaths().size(); i++) {
             if (Objects.equals(getPaths().get(i).trim(), pathToFile)) {
                 return false;
@@ -57,6 +63,7 @@ public class HelperController {
      * Метод обновляет объект который находится в коллекции, по его id
      * При это не изменяя его id.
      * Цикл for прогоняется по коллекции, если id найдено, то меняем поля.
+     *
      * @param id
      * @throws IOException
      * @throws ParseException
@@ -75,12 +82,13 @@ public class HelperController {
                 LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
 
                 lab.setName(e.getName());
+
                 lab.setAuthor(e.getAuthor());
                 lab.setCoordinates(e.getCoordinates());
                 lab.setDifficulty(e.getDifficulty());
                 lab.setMinimalPoint(e.getMinimalPoint());
                 lab.setTunedInWorks(e.getTunedInWorks());
-
+                System.out.println("Элемент успешно добавлен в коллекцию!");
                 flag = false;
                 break;
             }
@@ -111,6 +119,7 @@ public class HelperController {
 
     /**
      * Дополнительный метод для {@link #getInfo()}
+     *
      * @return
      */
     private LocalDate getCreationDate() {
@@ -135,6 +144,7 @@ public class HelperController {
 
     /**
      * Метод удаляет из коллекции все элементы, превышающие заданный.
+     *
      * @param e
      */
     public void removeGreater(String e) {
@@ -151,6 +161,7 @@ public class HelperController {
 
     /**
      * Метод удаляет все элементы меньшие чем заданный.
+     *
      * @param e
      */
     public void removeLower(String e) {
@@ -188,26 +199,27 @@ public class HelperController {
 
     /**
      * Метод добавляет элемент в коллекцию
+     *
+     * @throws IOException
+     * @throws ParseException
      * @see #addCoordinates()
      * @see #addCoordinates()
      * @see #addMinimalPoint()
      * @see #addTunedInWorks()
      * @see #addPerson()
-     * @throws IOException
-     * @throws ParseException
      */
-    public void addElement() throws IOException, ParseException {
-        System.out.println("Введите название Лабараторной работы: ");
-        String name = reader.readLine();
+    public void addElement(String e) throws IOException, ParseException {
+        String name = e;
+        System.out.println("Введите название Лабараторной работы: " + name);
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
         int tunedInWorks = addTunedInWorks();
         Difficulty difficulty = addDifficulty();
         int id = generateId();
-        LabWork e = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        LabWork lab = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
 
-        if (getRoot().getLabWorkSet().add(e))
+        if (getRoot().getLabWorkSet().add(lab))
             System.out.println("Элемент успешно добавлен в коллекцию!");
         else
             System.out.println("К сожалению, что-то пошло не так. Попробуйте еще раз!");
@@ -215,6 +227,7 @@ public class HelperController {
 
     /**
      * Метод генерирует id нового объекта
+     *
      * @return
      */
     public int generateId() {
@@ -227,19 +240,20 @@ public class HelperController {
 
     /**
      * Сортирует коллекцию объектов по ключу.
+     *
      * @param unsortedMap
-     * @return
      * @param <K>
      * @param <V>
+     * @return
      */
     public <K, V> Map<K, V> sortByKeys(Map<K, V> unsortedMap) {
         return new TreeMap<>(unsortedMap);
     }
 
 
-
     /**
-     * Добавить элемент в коллекцию, если он больше остальных. Сравнивая по {@link LabWork#minimalPoint}
+     * Добавить элемент в коллекцию, если он больше остальных. Сравнивая по
+     *
      * @param name
      * @throws IOException
      * @throws ParseException
@@ -254,20 +268,21 @@ public class HelperController {
         LabWork maximum = Collections.max(getRoot().getLabWorkSet(), compareByMinPoint);
         if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0) {
             getRoot().getLabWorkSet().add(e);
+            System.out.println("Элемент добавлен в коллекцию");
         }
     }
 
     /**
-     * Метод обрабатывает поле {@link LabWork#tunedInWorks}
-     * Дополнительный метод для {@link #addElement()}
+     * Метод обрабатывает поле
+     * Дополнительный метод для {@link #addElement(String)}
+     *
      * @return
      */
     private int addTunedInWorks() {
         int tunedInWorks = 0;
         boolean flag = false;
-        while(!flag) {
-            System.out.println("Введите tunedInWorks:");
-            System.out.println("Введите tunedInWorks:");
+        while (!flag) {
+            System.out.println("Введите tunedInWorks(1-1000):");
             tunedInWorks = checkOnInt();
             if (tunedInWorks > 1 && tunedInWorks < 1000)
                 flag = true;
@@ -280,14 +295,15 @@ public class HelperController {
 
     /**
      * Метод обрабатывает поле {@link LabWork#minimalPoint}
-     * Дополнительный метод для {@link #addElement()}
+     * Дополнительный метод для {@link #addElement(String)}
+     *
      * @return
      */
     private int addMinimalPoint() {
         int minimalPoint = 0;
         boolean flag = false;
-        while(!flag) {
-            System.out.println("Введите minimalPoint:");
+        while (!flag) {
+            System.out.println("Введите minimalPoint(1-1000):");
             minimalPoint = checkOnInt();
             if (minimalPoint > 1 && minimalPoint < 1000)
                 flag = true;
@@ -300,7 +316,8 @@ public class HelperController {
 
     /**
      * Метод обрабатывает поле {@link LabWork#coordinates}
-     * Дополнительный метод для {@link #addElement()}
+     * Дополнительный метод для {@link #addElement(String)}
+     *
      * @return
      * @throws IOException
      */
@@ -326,7 +343,8 @@ public class HelperController {
     }
 
     /**
-     * Доп метод для {@link #addElement()}: добавить сложность
+     * Доп метод для {@link #addElement(String)}: добавить сложность
+     *
      * @return
      * @throws IOException
      */
@@ -338,7 +356,8 @@ public class HelperController {
 
 
     /**
-     * Доп метод для {@link #addElement()}: добавить автора
+     * Доп метод для {@link #addElement(String)}: добавить автора
+     *
      * @return
      * @throws IOException
      */
@@ -348,14 +367,15 @@ public class HelperController {
 
         boolean flag = false;
         float height = 0;
-        while(!flag) {
+        while (!flag) {
             System.out.println("Введите рост автора: ");
             float h = checkOnFloat();
             if (h > 67.08 && h < 272) {
                 flag = true;
-                height = checkOnFloat();
-            }else {
-                System.out.println("Вы ввели неправильный рост!");}
+                height = h;
+            } else {
+                System.out.println("Вы ввели неправильный рост! Доступно в интервале 67.08 до 272.");
+            }
         }
 
         String date = null;
@@ -383,6 +403,7 @@ public class HelperController {
 
     /**
      * Метод проверяет является ли число типом {@link Double}
+     *
      * @return
      */
     private double checkOnDouble() {
@@ -402,6 +423,7 @@ public class HelperController {
 
     /**
      * Метод проверяет является ли число типом {@link Integer}
+     *
      * @return
      */
     private int checkOnInt() {
@@ -419,6 +441,7 @@ public class HelperController {
 
     /**
      * Метод проверяет является ли число типом {@link Enum}
+     *
      * @return
      */
     private String checkOnEnum(Class className) {
@@ -439,6 +462,7 @@ public class HelperController {
 
     /**
      * Метод проверяет является ли число типом {@link Float}
+     *
      * @return
      */
     private float checkOnFloat() {
@@ -507,6 +531,7 @@ public class HelperController {
 
     /**
      * Доп метод для вывода коллекции элементов в {@link #printFieldAscendingTunedInWorks()}
+     *
      * @param collection
      */
     private void printCollection(Collection<Integer> collection) {
@@ -529,7 +554,6 @@ public class HelperController {
 
         System.out.println("\n");
     }
-
 
 
     Comparator<LabWork> compareByName = new Comparator<LabWork>() {

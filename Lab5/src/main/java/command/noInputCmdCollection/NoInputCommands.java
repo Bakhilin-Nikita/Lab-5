@@ -8,16 +8,22 @@ import command.commands.noInputCommands.ShowTheCollectionCommand;
 import command.commands.noInputCommands.help.GetHelpCommand;
 import command.commands.noInputCommands.help.Help;
 import command.commands.noInputCommands.help.Information;
-
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NoInputCommands {
-    private Map<String, Invoker> commands = new HashMap<>();
-    private HelperController helperController;
+/**
+ * @see NoInputCommands служит хранилищем команд без входных данных.
+ */
 
-    public NoInputCommands(HelperController helperController) throws FileNotFoundException {
+public class NoInputCommands {
+    private Map<String, Invoker> commands = new HashMap<>(); // Map для хранения команд
+    private HelperController helperController; // Объект который раскидывается на все команды.
+
+    /**
+     * Конструктор собирает команды в {@link #commands}
+     * @param helperController
+     */
+    public NoInputCommands(HelperController helperController) {
 
         this.helperController = helperController;
 
