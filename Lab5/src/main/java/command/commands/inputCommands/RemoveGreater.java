@@ -1,12 +1,13 @@
 package command.commands.inputCommands;
 
+import command.Command;
 import command.ElementCommand;
 import command.commands.Invoker;
 
 
 public class RemoveGreater extends Invoker {
 
-    private ElementCommand elementCommand;
+    private Command elementCommand;
 
     private static final String COMMAND_NAME = RemoveGreater.class.getSimpleName();
 
@@ -15,12 +16,12 @@ public class RemoveGreater extends Invoker {
     }
 
 
-    public RemoveGreater(ElementCommand elementCommand) {
+    public RemoveGreater(Command elementCommand) {
         this.elementCommand = elementCommand;
     }
 
     public void removeGreater(String e){
-        this.elementCommand.execute(e);
+        this.elementCommand.execute();
     }
 
     @Override

@@ -1,11 +1,12 @@
 package command.commands.inputCommands;
 
 
+import command.Command;
 import command.ElementCommand;
 import command.commands.Invoker;
 
 public class RemoveLower extends Invoker {
-    private ElementCommand removeLowerEl;
+    private Command removeLowerEl;
     private static final String COMMAND_NAME = RemoveLower.class.getSimpleName();
 
     public static String getCommandName() {
@@ -13,16 +14,16 @@ public class RemoveLower extends Invoker {
     }
 
 
-    public RemoveLower(ElementCommand removeLowerEl) {
+    public RemoveLower(Command removeLowerEl) {
         this.removeLowerEl = removeLowerEl;
     }
 
     public void removeLower(String e) {
-        removeLowerEl.execute(e);
+        removeLowerEl.execute();
     }
 
     @Override
     public void doCommand(String e) {
-        removeLowerEl.execute(e);
+        removeLowerEl.execute();
     }
 }

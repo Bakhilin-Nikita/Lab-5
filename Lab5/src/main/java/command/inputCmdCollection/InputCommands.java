@@ -1,5 +1,6 @@
 package command.inputCmdCollection;
 
+import command.Command;
 import command.ElementCommand;
 import manager.HelperController;
 import command.UpdateCommand;
@@ -31,12 +32,6 @@ public class InputCommands {
         ElementCommand addElIfMax = new AddIfMaxCommand(helperController);
         AddIfMax addMax = new AddIfMax(addElIfMax);
 
-        ElementCommand removeGreaterEl = new RemoveGreaterElementCommand(helperController);
-        RemoveGreater greater = new RemoveGreater(removeGreaterEl);
-
-        ElementCommand removeLowerEl = new RemoveLowerElementCommand(helperController);
-        RemoveLower lower = new RemoveLower(removeLowerEl);
-
         UpdateCommand updateEl = new UpdateElementCommand(helperController);
         Update update = new Update(updateEl);
 
@@ -48,8 +43,6 @@ public class InputCommands {
         inputCommands.put(a.getCommandName(), a);
         inputCommands.put(removeEl.getCommandName(), removeEl);
         inputCommands.put(addMax.getCommandName(), addMax);
-        inputCommands.put(greater.getCommandName(), greater);
-        inputCommands.put(lower.getCommandName(), lower);
         inputCommands.put(update.getCommandName(), update);
         inputCommands.put(executeScript.getCOMMAND_NAME(), executeScript);
     }
