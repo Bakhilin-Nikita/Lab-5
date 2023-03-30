@@ -1,10 +1,11 @@
 package command.commands.inputCommands;
 
 
+import command.Command;
 import command.ElementCommand;
 import manager.HelperController;
 
-public class RemoveGreaterElementCommand implements ElementCommand {
+public class RemoveGreaterElementCommand implements Command {
     private HelperController helperController;
 
     public RemoveGreaterElementCommand(HelperController helperController) {
@@ -12,8 +13,8 @@ public class RemoveGreaterElementCommand implements ElementCommand {
     }
 
     @Override
-    public void execute(String e) {
-        helperController.removeGreater(e);
+    public void execute() {
+        helperController.removeGreater();
     }
 }
 

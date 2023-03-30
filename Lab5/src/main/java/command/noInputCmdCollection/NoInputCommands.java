@@ -1,6 +1,10 @@
 package command.noInputCmdCollection;
 
 import command.Command;
+import command.commands.inputCommands.RemoveGreater;
+import command.commands.inputCommands.RemoveGreaterElementCommand;
+import command.commands.inputCommands.RemoveLower;
+import command.commands.inputCommands.RemoveLowerElementCommand;
 import manager.HelperController;
 import command.commands.*;
 import command.commands.noInputCommands.*;
@@ -48,6 +52,12 @@ public class NoInputCommands {
         Command maxByAuthor = new MaxByAuthorCommand(helperController);
         MaxByAuthor author = new MaxByAuthor(maxByAuthor);
 
+        Command removeGreaterEl = new RemoveGreaterElementCommand(helperController);
+        RemoveGreater greater = new RemoveGreater(removeGreaterEl);
+
+        Command removeLowerEl = new RemoveLowerElementCommand(helperController);
+        RemoveLower lower = new RemoveLower(removeLowerEl);
+
         Save save = new Save(helperController);
 
         Exit exit = new Exit(helperController);
@@ -61,6 +71,8 @@ public class NoInputCommands {
         commands.put(info.getCommandName(), info);
         commands.put(save.getCommandName(), save);
         commands.put(exit.getCommandName(), exit);
+        commands.put(greater.getCommandName(), greater);
+        commands.put(lower.getCommandName(), lower);
     }
 
     public Map<String, Invoker> getCommands() {
