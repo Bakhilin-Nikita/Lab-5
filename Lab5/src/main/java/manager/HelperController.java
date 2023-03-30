@@ -214,7 +214,7 @@ public class HelperController {
      */
     public void addElement(String e) throws IOException, ParseException {
         String name = e;
-        System.out.println("Введите название Лабараторной работы: " + name);
+        System.out.println("Введите название Лабораторной работы: " + name);
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
@@ -367,7 +367,18 @@ public class HelperController {
      */
     private Person addPerson() throws IOException {
         System.out.println("Введите имя автора: ");
-        String name = reader.readLine();
+        String name = null;
+        while (name == null) {
+            try {
+                name = reader.readLine();
+                if(name == null || name.isEmpty()){
+                    throw new RuntimeException("Пустая строка не может именем автора. Попробуй ещё раз.");
+                }
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+                name = null;
+            }
+        }
 
         boolean flag = false;
         float height = 0;
