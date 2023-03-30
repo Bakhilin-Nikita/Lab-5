@@ -1,6 +1,7 @@
 import manager.Controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * App запускающий класс, содержащий метод {@link #main(String[])}
@@ -14,8 +15,8 @@ public class App {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
-        Controller controller = new Controller();
+    public static void main(String[] args) throws IOException, ParseException {
+        Controller controller = new Controller(args[0]);
         controller.start();
     }
 }

@@ -13,6 +13,7 @@ import parser.Root;
 
 import java.io.*;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Метод парсит данные из json файла в коллекцию {@link Root#labWorkSet}
@@ -21,17 +22,19 @@ import java.util.HashSet;
 
 public class ParserFromJson {
 
+
+
     /**
      * Метод обращается к файлу notes.json, использует его в качестве базы данных объектов.
      * @return
      * @throws IOException
      */
-    public Root parse() throws IOException {
+    public Root parse(String fileName) throws IOException {
         Root root = new Root();
         JSONParser parser = new JSONParser();
-        File file = new File("notes.json");
+        File file = new File(fileName);
         if (file.exists())
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream("notes.json"))) {
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
 
                 JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
@@ -67,9 +70,12 @@ public class ParserFromJson {
 
                 root.setLabWorkSet(labWorks);
 
+                root.setValid(true);
+
                 return root;
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+            } catch (ParseException | NullPointerException e) {
+                System.out.println("Невалидный файл json!");
+                root.setValid(false);
             }
         return root;
     }

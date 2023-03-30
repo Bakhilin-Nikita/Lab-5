@@ -26,13 +26,16 @@ public class HelperController {
     private ArrayList<String> paths = new ArrayList<>(); // Не может быть null
     private BufferedReader reader; // Не может быть null
 
+    private final String fileName;
+
     /**
      * Конструктор создает объект который выгружает данные из файла в нашу переменную.
      * Устанавливает директорию корневую.
      */
-    public HelperController() throws IOException {
+    public HelperController(String file, Root root) throws IOException {
+        this.fileName = file;
         ParserFromJson parserFromJson = new ParserFromJson();
-        this.root = parserFromJson.parse();
+        this.root = root;
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.paths.add(System.getProperty("user.dir"));
     }
@@ -208,9 +211,9 @@ public class HelperController {
      * @see #addTunedInWorks()
      * @see #addPerson()
      */
-    public void addElement(String e) throws IOException, ParseException {
-        String name = e;
-        System.out.println("Введите название Лабараторной работы: " + name);
+    public void addElement(String e) throws IOException {
+        System.out.println("Введите название Лабараторной работы: ");
+        String name = reader.readLine();
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
@@ -278,17 +281,29 @@ public class HelperController {
      *
      * @return
      */
-    private int addTunedInWorks() {
-        int tunedInWorks = 0;
+    private Integer addTunedInWorks() throws IOException {
+        Integer tunedInWorks = null;
         boolean flag = false;
-        while (!flag) {
-            System.out.println("Введите tunedInWorks(1-1000):");
-            tunedInWorks = checkOnInt();
-            if (tunedInWorks > 1 && tunedInWorks < 1000)
-                flag = true;
-            else
-                System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
-        }
+        System.out.println("Введите tunedInWorks(1-1000):");
+        String commandValue = reader.readLine();
+        if (!commandValue.trim().isEmpty())
+            while (!flag) {
+                    try {
+                        if (commandValue != null) {
+                            tunedInWorks = Integer.parseInt(commandValue);
+                        } else {
+                            System.out.println("Введите tunedInWorks(1-1000):");
+                            tunedInWorks = checkOnInt();
+                        }
+                        if (tunedInWorks > 0 && tunedInWorks < 1001) {
+                            flag = true;
+                        }
+                        commandValue = null;
+                    } catch (NumberFormatException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+
 
         return tunedInWorks;
     }
@@ -305,7 +320,7 @@ public class HelperController {
         while (!flag) {
             System.out.println("Введите minimalPoint(1-1000):");
             minimalPoint = checkOnInt();
-            if (minimalPoint > 1 && minimalPoint < 1000)
+            if (minimalPoint > 0 && minimalPoint < 1001)
                 flag = true;
             else
                 System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
@@ -336,7 +351,7 @@ public class HelperController {
     public void save() {
         ParserToJson parserToJson = new ParserToJson();
 
-        if (parserToJson.serialization(getRoot().getLabWorkSet()))
+        if (parserToJson.serialization(getRoot().getLabWorkSet(), this.fileName))
             System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
         else
             System.out.println("Что-то пошлое не так :(");
@@ -348,7 +363,7 @@ public class HelperController {
      * @return
      * @throws IOException
      */
-    private Difficulty addDifficulty() throws IOException {
+    private Difficulty addDifficulty() {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
         String difficulty = checkOnEnum(Difficulty.class);
         return Difficulty.valueOf(difficulty);
@@ -370,6 +385,7 @@ public class HelperController {
         while (!flag) {
             System.out.println("Введите рост автора: ");
             float h = checkOnFloat();
+            h = (float) Math.floor(h);
             if (h > 67.08 && h < 272) {
                 flag = true;
                 height = h;

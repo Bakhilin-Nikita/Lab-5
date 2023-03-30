@@ -20,13 +20,14 @@ public class ParserToJson {
      * @param labs
      * @return
      */
-    public boolean serialization(HashSet<LabWork> labs) {
+    public boolean serialization(HashSet<LabWork> labs, String file) {
         Gson gson = new Gson();
 
         String result = gson.toJson(labs);
 
+        System.out.println(result);
 
-        try (FileOutputStream out = new FileOutputStream("notes.json");
+        try (FileOutputStream out = new FileOutputStream(file);
              BufferedOutputStream bos = new BufferedOutputStream(out)) {
             // перевод строки в байты
             byte[] buffer = result.getBytes();
