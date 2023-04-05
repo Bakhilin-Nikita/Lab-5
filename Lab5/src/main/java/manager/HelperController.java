@@ -142,6 +142,29 @@ public class HelperController {
         }
     }
 
+    private LabWork adder() throws IOException {
+        System.out.println("Введите название Лабораторной работы: ");
+        String name = null;
+        while (name == null) {
+            try {
+                name = reader.readLine();
+                if(name == null || name.isEmpty()){
+                    throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
+                }
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+                name = null;
+            }
+        }
+        Coordinates coordinates = addCoordinates();
+        Person author = addPerson();
+        int minimalPoint = addMinimalPoint();
+        int tunedInWorks = addTunedInWorks();
+        Difficulty difficulty = addDifficulty();
+        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        return e;
+    }
+
     /**
      * Метод удаляет из коллекции все элементы, превышающие заданный.
      *
