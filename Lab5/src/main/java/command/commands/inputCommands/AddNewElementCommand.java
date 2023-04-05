@@ -14,11 +14,11 @@ public class AddNewElementCommand implements ElementCommand {
     }
 
     @Override
-    public void execute(String e) {
+    public void execute(String e)  {
         try {
             helperController.addElement(e);
-        } catch (IOException | ParseException ex) {
-            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }

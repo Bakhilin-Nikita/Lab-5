@@ -9,6 +9,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import java.io.*;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -17,13 +18,14 @@ import java.util.*;
  */
 
 public class Controller {
+    private final String file;
     private Map<String, Invoker> commands = new HashMap<>(); // Map для команд БЕЗ входных данных, не может быть null
     private Map<String, Invoker> inputCommands = new HashMap<>(); // Map для команд С входными данными, не может быть null
     private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов, не может быть null
     private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию. Не может быть null
     private GetHelpCommand help = new GetHelpCommand(new Information()); // Не может быть null
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));  // Не может быть null
-    private HelperController helperController = new HelperController(); // Не может быть null
+    private HelperController helperController; // Не может быть null
     private Root root; // Не может быть null
     private ExecuteScript executeScript; // Не может быть null
 
@@ -35,10 +37,14 @@ public class Controller {
      * @throws FileNotFoundException
      * @see LabWork
      */
-    public Controller() throws IOException {
+    public Controller(String file) throws IOException {
+        this.file = file;
         if (parserFromJson.checkOnEmpty()) {
-            root = parserFromJson.parse();
+            root = parserFromJson.parse(this.file);
             labWorks = root.getLabWorkSet();
+            this.helperController = new HelperController(this.file, getRoot());
+        } else {
+            this.helperController = new HelperController(this.file, getRoot());
         }
     }
 
@@ -49,20 +55,22 @@ public class Controller {
      * Проверяется наличие execute_script на вводе
      * @throws IOException
      */
-    public void start() throws IOException {
-        setExecuteScript(new ExecuteScript(getHelperController()));
-        boolean flag = false;
-        help.execute();
-        while (!flag) {
-            String cmd = reformatCmd(reader.readLine());
-            String[] arr = cmd.split(" ", 2);
-            if (arr[0].equals("execute_script")) {
-                getExecuteScript().execute(arr[1]);
-            }
-            searchCommandInCollection(cmd);
+    public void start() throws IOException, ParseException {
+        if (getRoot().getValid()) {
+            setExecuteScript(new ExecuteScript(getHelperController()));
+            boolean flag = false;
+            help.execute();
+            while (!flag) {
+                String cmd = reformatCmd(reader.readLine()).trim();
+                String[] arr = cmd.split(" ", 2);
+                if (arr[0].equals("execute_script")) {
+                    getExecuteScript().execute(arr[1]);
+                }
+                searchCommandInCollection(cmd);
 
-            System.out.println("---------------------");
-            System.out.println("? Если возникли трудности, введите команду help");
+                System.out.println("---------------------");
+                System.out.println("? Если возникли трудности, введите команду help");
+            }
         }
     }
 
@@ -73,7 +81,7 @@ public class Controller {
      *
      * @param
      */
-    public void searchCommandInCollection(String cmd) throws FileNotFoundException {
+    public void searchCommandInCollection(String cmd) throws IOException, ParseException {
 
         getHelperController().setReader(new BufferedReader(new InputStreamReader(System.in)));
 
@@ -149,6 +157,14 @@ public class Controller {
         }
 
         return false;
+    }
+
+    public void setRoot(Root root) {
+        this.root = root;
+    }
+
+    public Root getRoot() {
+        return root;
     }
 
     public void setCommands(Map<String, Invoker> commands) {

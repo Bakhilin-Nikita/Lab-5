@@ -1,5 +1,8 @@
 package command;
 
+import java.io.IOException;
+import java.text.ParseException;
+
 /**
  * Интерфейс для обеспечения полиморфизма команд с входными данными
  */

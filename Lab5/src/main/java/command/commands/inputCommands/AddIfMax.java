@@ -5,6 +5,9 @@ import command.ElementCommand;
 import command.commands.Invoker;
 import object.LabWork;
 
+import java.io.IOException;
+import java.text.ParseException;
+
 public class AddIfMax extends Invoker {
     private ElementCommand addMax;
     private static final String COMMAND_NAME = AddIfMax.class.getSimpleName();
@@ -19,7 +22,7 @@ public class AddIfMax extends Invoker {
 
 
     @Override
-    public void doCommand(String e) {
+    public void doCommand(String e) throws IOException, ParseException {
         addMax.execute(e);
     }
 }

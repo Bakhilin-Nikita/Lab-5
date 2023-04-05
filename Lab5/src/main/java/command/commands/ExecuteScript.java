@@ -5,6 +5,7 @@ import command.noInputCmdCollection.NoInputCommands;
 import manager.HelperController;
 import org.apache.commons.lang3.text.WordUtils;
 import java.io.*;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ public class ExecuteScript extends Invoker {
             execute(e);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        } catch (ParseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -44,7 +47,7 @@ public class ExecuteScript extends Invoker {
      * @throws IOException
      */
 
-    public void execute(String pathToFile) throws IOException {
+    public void execute(String pathToFile) throws IOException, ParseException {
         pathToFile = System.getProperty("user.dir") + "/" + pathToFile;
         System.out.println(pathToFile);
         if (new File(pathToFile).exists()) {
