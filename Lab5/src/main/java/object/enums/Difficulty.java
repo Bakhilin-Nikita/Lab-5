@@ -1,20 +1,26 @@
 package object.enums;
 
 public enum Difficulty {
-    VERY_EASY("очень легко"),
-    EASY("легко"),
-    VERY_HARD("очень тудно"),
-    IMPOSSIBLE("невозможно"),
-    HOPELESS("безнадёжно");
+    VERY_EASY("очень легко",1),
+    EASY("легко",2),
+    VERY_HARD("очень тудно",3),
+    IMPOSSIBLE("невозможно",4),
+    HOPELESS("безнадёжно",5);
 
     String name;
+    int level;
 
-    Difficulty(String name) {
+    Difficulty(String name, int level) {
         this.name = name;
+        this.level = level;
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

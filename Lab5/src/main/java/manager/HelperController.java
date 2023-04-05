@@ -146,15 +146,18 @@ public class HelperController {
      * Метод удаляет из коллекции все элементы, превышающие заданный.
      *
      */
-    public void removeGreater() {
-        System.out.println("Введите id элемента для сравнения:");
-        int id = checkOnInt();
+    public void removeGreater() throws IOException, ParseException {
+        System.out.println("Введите элемент для сравнения:");
+        LabWork comparableEl = adder();
         List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.add(comparableEl);
         labWorkList.addAll(getRoot().getLabWorkSet());
+        labWorkList.sort(compareByDifficultyReverse);
         labWorkList.sort(compareByMinPointReverse);
+        labWorkList.sort(compareByTunedInWorksReverse);
 
         for (LabWork el : labWorkList) {
-            if (el.getId() == id) {
+            if (el.equals(comparableEl)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
@@ -164,17 +167,35 @@ public class HelperController {
     }
 
     /**
+     * Вспомогательный метод. Создаёт новый элемент по входным данным, но никуда его не сохраняет.
+     */
+    private LabWork adder() throws IOException {
+        System.out.println("Введите название Лабораторной работы: ");
+        String name = reader.readLine();
+        Coordinates coordinates = addCoordinates();
+        Person author = addPerson();
+        int minimalPoint = addMinimalPoint();
+        int tunedInWorks = addTunedInWorks();
+        Difficulty difficulty = addDifficulty();
+        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        return e;
+    }
+
+    /**
      * Метод удаляет все элементы меньшие, чем заданный.
      */
-    public void removeLower() {
-        System.out.println("Введите id элемента для сравнения:");
-        int id = checkOnInt();
+    public void removeLower() throws IOException {
+        System.out.println("Введите элемент для сравнения:");
+        LabWork comparableEl = adder();
         List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.add(comparableEl);
         labWorkList.addAll(getRoot().getLabWorkSet());
+        labWorkList.sort(compareByDifficulty);
         labWorkList.sort(compareByMinPoint);
+        labWorkList.sort(compareByTunedInWorks);
 
         for (LabWork el : labWorkList) {
-            if (el.getId() == id) {
+            if (el.equals(comparableEl)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
@@ -599,6 +620,34 @@ public class HelperController {
         @Override
         public int compare(LabWork o1, LabWork o2) {
             return (int) (o1.getId() - o2.getId());
+        }
+    };
+
+    Comparator<LabWork> compareByTunedInWorks = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o1.getTunedInWorks() - o2.getTunedInWorks();
+        }
+    };
+
+    Comparator<LabWork> compareByTunedInWorksReverse = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o2.getTunedInWorks() - o1.getTunedInWorks();
+        }
+    };
+
+    Comparator<LabWork> compareByDifficulty = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o1.getDifficulty().getLevel() - o2.getDifficulty().getLevel();
+        }
+    };
+
+    Comparator<LabWork> compareByDifficultyReverse = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o2.getDifficulty().getLevel() - o1.getDifficulty().getLevel();
         }
     };
 
