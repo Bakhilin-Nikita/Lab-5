@@ -1,5 +1,7 @@
 package command;
 
+import java.text.ParseException;
+
 /**
  * Интерфейс для обеспечения полиморфизма команд без параметров.
  */
@@ -8,5 +10,5 @@ public interface Command {
     /**
      * Метод который исполняется во всех командах без параметров
      */
-    void execute();
+    void execute() throws ParseException;
 }

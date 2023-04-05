@@ -1,10 +1,7 @@
 package command.noInputCmdCollection;
 
 import command.Command;
-import command.commands.inputCommands.RemoveGreater;
-import command.commands.inputCommands.RemoveGreaterElementCommand;
-import command.commands.inputCommands.RemoveLower;
-import command.commands.inputCommands.RemoveLowerElementCommand;
+import command.commands.inputCommands.*;
 import manager.HelperController;
 import command.commands.*;
 import command.commands.noInputCommands.*;
@@ -58,6 +55,12 @@ public class NoInputCommands {
         Command removeLowerEl = new RemoveLowerElementCommand(helperController);
         RemoveLower lower = new RemoveLower(removeLowerEl);
 
+        Command addEl = new AddNewElementCommand(helperController);
+        Add a = new Add(addEl);
+
+        Command addElIfMax = new AddIfMaxCommand(helperController);
+        AddIfMax addMax = new AddIfMax(addElIfMax);
+
         Save save = new Save(helperController);
 
         Exit exit = new Exit(helperController);
@@ -73,6 +76,8 @@ public class NoInputCommands {
         commands.put(exit.getCommandName(), exit);
         commands.put(greater.getCommandName(), greater);
         commands.put(lower.getCommandName(), lower);
+        commands.put(addMax.getCommandName(), addMax);
+        commands.put(a.getCommandName(), a);
     }
 
     public Map<String, Invoker> getCommands() {

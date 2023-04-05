@@ -72,17 +72,9 @@ public class HelperController {
         boolean flag = true;
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
-                System.out.println("Введите название Лабараторной работы: ");
-                String name = reader.readLine();
-                Coordinates coordinates = addCoordinates();
-                Person author = addPerson();
-                int minimalPoint = addMinimalPoint();
-                int tunedInWorks = addTunedInWorks();
-                Difficulty difficulty = addDifficulty();
-                LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+                LabWork e = adder();
 
                 lab.setName(e.getName());
-
                 lab.setAuthor(e.getAuthor());
                 lab.setCoordinates(e.getCoordinates());
                 lab.setDifficulty(e.getDifficulty());
@@ -241,16 +233,8 @@ public class HelperController {
      * @see #addTunedInWorks()
      * @see #addPerson()
      */
-    public void addElement(String e) throws IOException, ParseException {
-        String name = e;
-        System.out.println("Введите название Лабораторной работы: " + name);
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
-        int id = generateId();
-        LabWork lab = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+    public void addElement() throws IOException, ParseException {
+        LabWork lab = adder();
 
         if (getRoot().getLabWorkSet().add(lab))
             System.out.println("Элемент успешно добавлен в коллекцию!");
@@ -291,13 +275,8 @@ public class HelperController {
      * @throws IOException
      * @throws ParseException
      */
-    public void addIfMax(String name) throws IOException, ParseException {
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
-        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+    public void addIfMax() throws IOException, ParseException {
+        LabWork e = adder();
         LabWork maximum = Collections.max(getRoot().getLabWorkSet(), compareByMinPoint);
         if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0) {
             getRoot().getLabWorkSet().add(e);

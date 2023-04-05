@@ -26,12 +26,6 @@ public class InputCommands {
 
         //создаём команды и объекты всех наших input - команд
 
-        ElementCommand addEl = new AddNewElementCommand(helperController);
-        Add a = new Add(addEl);
-
-        ElementCommand addElIfMax = new AddIfMaxCommand(helperController);
-        AddIfMax addMax = new AddIfMax(addElIfMax);
-
         UpdateCommand updateEl = new UpdateElementCommand(helperController);
         Update update = new Update(updateEl);
 
@@ -40,9 +34,7 @@ public class InputCommands {
         ExecuteScript executeScript = new ExecuteScript(helperController);
 
         //добавляем сюда все команды без входных элементов
-        inputCommands.put(a.getCommandName(), a);
         inputCommands.put(removeEl.getCommandName(), removeEl);
-        inputCommands.put(addMax.getCommandName(), addMax);
         inputCommands.put(update.getCommandName(), update);
         inputCommands.put(executeScript.getCOMMAND_NAME(), executeScript);
     }

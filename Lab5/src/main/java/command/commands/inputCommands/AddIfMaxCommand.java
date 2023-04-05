@@ -1,12 +1,13 @@
 package command.commands.inputCommands;
 
+import command.Command;
 import command.ElementCommand;
 import manager.HelperController;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-public class AddIfMaxCommand implements ElementCommand {
+public class AddIfMaxCommand implements Command {
     private HelperController helperController;
 
     public AddIfMaxCommand(HelperController helperController) {
@@ -15,9 +16,9 @@ public class AddIfMaxCommand implements ElementCommand {
     }
 
     @Override
-    public void execute(String e) {
+    public void execute() {
         try {
-            helperController.addIfMax(e);
+            helperController.addIfMax();
         } catch (IOException | ParseException ex) {
             throw new RuntimeException(ex);
         }
