@@ -17,8 +17,8 @@ public class Coordinates {
         } else {
             this.x = x;
         }
-        if (y == null || y < -184) {
-            throw new InvalidFieldY("Field Y must be > -184 and con not be NULL");
+        if (y == null) {
+            throw new InvalidFieldY("Field Y can not be NULL");
         } else {
             this.y = y;
         }

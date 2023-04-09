@@ -18,19 +18,19 @@ public class LabWork {
     private Coordinates coordinates = new Coordinates(); //Поле не может быть null
     //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private int minimalPoint; //Значение поля должно быть больше 0
-    private int tunedInWorks;
+    private Integer tunedInWorks;
     private Difficulty difficulty; //Поле может быть null
     private Person author; //Поле не может быть null
 
     private String creationDateString;  //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
-    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author, String creationDateString) {
+    public LabWork(int id, String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author, String creationDateString) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;
         this.author = Objects.requireNonNull(author);
-        this.tunedInWorks = tunedInWorks; // I do not understand what is it
+        this.tunedInWorks = tunedInWorks;
         this.difficulty = Objects.requireNonNull(difficulty);
 
         if (creationDateString.isEmpty()) {
@@ -46,7 +46,7 @@ public class LabWork {
         }
     }
 
-    public LabWork(int id, String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+    public LabWork(int id, String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
@@ -65,7 +65,7 @@ public class LabWork {
         this.creationDateString = date.format(formatter);
     }
 
-    public LabWork(String name, int minimalPoint, int tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+    public LabWork(String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;

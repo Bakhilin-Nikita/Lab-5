@@ -3,7 +3,9 @@ package command.commands.inputCommands;
 import command.Command;
 import command.ElementCommand;
 import command.commands.Invoker;
+import manager.HelperController;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 
@@ -22,12 +24,12 @@ public class RemoveGreater extends Invoker {
         this.elementCommand = elementCommand;
     }
 
-    public void removeGreater(String e) throws ParseException {
+    public void removeGreater(String e) throws ParseException, IOException {
         this.elementCommand.execute();
     }
 
     @Override
-    public void doCommand(String e) throws ParseException {
+    public void doCommand(String e) throws ParseException, IOException {
         //int i = Integer.parseInt(e.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
         removeGreater(e);
     }

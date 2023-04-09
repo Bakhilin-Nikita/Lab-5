@@ -99,7 +99,7 @@ public class HelperController {
         String name = null;
         while (name == null) {
             try {
-                name = reader.readLine();
+                name = reader.readLine().trim();
                 if(name == null || name.isEmpty()){
                     throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
                 }
@@ -111,9 +111,9 @@ public class HelperController {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
+        Integer tunedInWorks = addTunedInWorks();
         Difficulty difficulty = addDifficulty();
-        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        LabWork e = new LabWork(generateId(), name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         return e;
     }
 
@@ -362,8 +362,8 @@ public class HelperController {
             try {
                 System.out.println("Введите координату y:");
                 y = checkOnDouble();
-                if (y < -184) {
-                    throw new InvalidFieldY("Field Y must be > -184 and con not be NULL");
+                if (y > -184) {
+                    throw new InvalidFieldY("Field Y must be < -184 and con not be NULL");
                 }
                 flag = true;
             } catch (InvalidFieldY e) {
@@ -406,10 +406,18 @@ public class HelperController {
      * @throws IOException
      */
     private Person addPerson() throws IOException {
-        System.out.println("Введите имя автора: ");
-        String name = reader.readLine();
-
         boolean flag = false;
+        String name = null;
+        while(!flag) {
+            System.out.println("Введите имя автора: ");
+            name = reader.readLine().trim();
+            if (!name.isEmpty())
+                flag = true;
+            else
+                System.out.println("Поле имя автора не может быть пустым");
+        }
+
+        flag = false;
         float height = 0;
         while (!flag) {
             System.out.println("Введите рост автора: ");
