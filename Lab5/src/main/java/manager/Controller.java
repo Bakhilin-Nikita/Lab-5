@@ -39,13 +39,15 @@ public class Controller {
      */
     public Controller(String file) throws IOException {
         this.file = file;
-        if (parserFromJson.checkOnEmpty()) {
+        if (parserFromJson.checkOnEmpty(this.file)) {
             root = parserFromJson.parse(this.file);
             labWorks = root.getLabWorkSet();
-            this.helperController = new HelperController(this.file, getRoot());
         } else {
-            this.helperController = new HelperController(this.file, getRoot());
+            root = new Root();
+            root.setValid(true);
         }
+
+        this.helperController = new HelperController(this.file, getRoot());
     }
 
     /**

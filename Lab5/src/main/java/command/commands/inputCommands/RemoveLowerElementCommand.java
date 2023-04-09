@@ -14,7 +14,7 @@ public class RemoveLowerElementCommand implements Command {
 
     @Override
     public void execute() {
-        helperController.removeLower();
+        //helperController.removeLower();
     }
 
 }

@@ -149,8 +149,8 @@ public class LabWork {
     public String toString() {
         return "id:" + id + "\n" +
                 "name:" + name + "\n" +
-                "coordinates:" + "\n" +
                 "creationDate:" + creationDateString + "\n" +
+                "coordinates:" + "\n" +
                 "[x=" + getCoordinates().getX() + "\n" +
                 "y=" + getCoordinates().getY() + "]" + "\n" +
                 "minimalPoint=" + minimalPoint + "\n" +

@@ -76,6 +76,10 @@ public class ParserFromJson {
             } catch (ParseException | NullPointerException e) {
                 System.out.println("Невалидный файл json!");
                 root.setValid(false);
+            } catch(IllegalArgumentException | ClassCastException e) {
+                System.out.println("Проблема с парсингом из файла -->");
+                System.out.println(e.getMessage());
+                root.setValid(false);
             }
         return root;
     }
@@ -85,10 +89,10 @@ public class ParserFromJson {
      * Метод проверяет есть ли в файле обьекты коллекции.
      * @return boolean
      */
-    public boolean checkOnEmpty() {
+    public boolean checkOnEmpty(String fileName) {
 
         try {
-            File file = new File("notes.json");
+            File file = new File(fileName);
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             try {
@@ -100,10 +104,8 @@ public class ParserFromJson {
 
             return true;
         } catch (Exception e) {
-            System.out.println(e);
+            return false;
         }
-
-        return false;
     }
 
 }

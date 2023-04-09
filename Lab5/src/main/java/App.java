@@ -16,7 +16,14 @@ public class App {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException, ParseException {
-        Controller controller = new Controller(args[0]);
+        String file;
+        try{
+            file = args[0];
+        } catch (IndexOutOfBoundsException e) {
+            file = "notes.json";
+        }
+
+        Controller controller = new Controller(file);
         controller.start();
     }
 }

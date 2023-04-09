@@ -14,7 +14,7 @@ public class RemoveGreaterElementCommand implements Command {
 
     @Override
     public void execute() {
-        helperController.removeGreater();
+   //     helperController.removeGreater();
     }
 }
 

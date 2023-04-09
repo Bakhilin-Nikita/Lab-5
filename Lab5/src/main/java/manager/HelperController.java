@@ -1,5 +1,6 @@
 package manager;
 
+import exceptions.InvalidFieldY;
 import object.Coordinates;
 import object.LabWork;
 import object.Person;
@@ -26,13 +27,16 @@ public class HelperController {
     private ArrayList<String> paths = new ArrayList<>(); // Не может быть null
     private BufferedReader reader; // Не может быть null
 
+    private final String fileName;
+
     /**
      * Конструктор создает объект который выгружает данные из файла в нашу переменную.
      * Устанавливает директорию корневую.
      */
-    public HelperController() throws IOException {
+    public HelperController(String file, Root root) throws IOException {
+        this.fileName = file;
         ParserFromJson parserFromJson = new ParserFromJson();
-        this.root = parserFromJson.parse();
+        this.root = root;
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.paths.add(System.getProperty("user.dir"));
     }
@@ -72,9 +76,17 @@ public class HelperController {
         boolean flag = true;
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
-                LabWork e = adder();
+                System.out.println("Введите название Лабараторной работы: ");
+                String name = reader.readLine();
+                Coordinates coordinates = addCoordinates();
+                Person author = addPerson();
+                int minimalPoint = addMinimalPoint();
+                int tunedInWorks = addTunedInWorks();
+                Difficulty difficulty = addDifficulty();
+                LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
 
                 lab.setName(e.getName());
+
                 lab.setAuthor(e.getAuthor());
                 lab.setCoordinates(e.getCoordinates());
                 lab.setDifficulty(e.getDifficulty());
@@ -134,68 +146,35 @@ public class HelperController {
         }
     }
 
-    private LabWork adder() throws IOException {
-        System.out.println("Введите название Лабораторной работы: ");
-        String name = null;
-        while (name == null) {
-            try {
-                name = reader.readLine();
-                if(name == null || name.isEmpty()){
-                    throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
-                }
-            } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
-                name = null;
-            }
-        }
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
-        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
-        return e;
-    }
-
     /**
      * Метод удаляет из коллекции все элементы, превышающие заданный.
      *
+     * @param e
      */
-    public void removeGreater() throws IOException, ParseException {
-        System.out.println("Введите элемент для сравнения:");
-        LabWork comparableEl = adder();
-        List<LabWork> labWorkList = new ArrayList<>();
-        labWorkList.add(comparableEl);
-        labWorkList.addAll(getRoot().getLabWorkSet());
-        labWorkList.sort(compareByDifficultyReverse);
+    public void removeGreater(String e) {
+        List<LabWork> labWorkList = new ArrayList<>(getRoot().getLabWorkSet());
         labWorkList.sort(compareByMinPointReverse);
-        labWorkList.sort(compareByTunedInWorksReverse);
-
         for (LabWork el : labWorkList) {
-            if (el.equals(comparableEl)) {
+            if (el.getName().equals(e)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
         }
-
-        System.out.println("Все элементы, большие данного, были удалены.");
+        System.out.println("Все элементы выше данного, были удаленны.");
     }
 
     /**
-     * Метод удаляет все элементы меньшие, чем заданный.
+     * Метод удаляет все элементы меньшие чем заданный.
+     *
+     * @param e
      */
-    public void removeLower() throws IOException {
-        System.out.println("Введите элемент для сравнения:");
-        LabWork comparableEl = adder();
+    public void removeLower(String e) {
         List<LabWork> labWorkList = new ArrayList<>();
-        labWorkList.add(comparableEl);
         labWorkList.addAll(getRoot().getLabWorkSet());
-        labWorkList.sort(compareByDifficulty);
-        labWorkList.sort(compareByMinPoint);
-        labWorkList.sort(compareByTunedInWorks);
+        labWorkList.sort(compareByName);
 
         for (LabWork el : labWorkList) {
-            if (el.equals(comparableEl)) {
+            if (el.getName().equals(e)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
@@ -233,8 +212,16 @@ public class HelperController {
      * @see #addTunedInWorks()
      * @see #addPerson()
      */
-    public void addElement() throws IOException, ParseException {
-        LabWork lab = adder();
+    public void addElement(String e) throws IOException {
+        System.out.println("Введите название Лабараторной работы: ");
+        String name = reader.readLine();
+        Coordinates coordinates = addCoordinates();
+        Person author = addPerson();
+        int minimalPoint = addMinimalPoint();
+        int tunedInWorks = addTunedInWorks();
+        Difficulty difficulty = addDifficulty();
+        int id = generateId();
+        LabWork lab = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
 
         if (getRoot().getLabWorkSet().add(lab))
             System.out.println("Элемент успешно добавлен в коллекцию!");
@@ -275,8 +262,13 @@ public class HelperController {
      * @throws IOException
      * @throws ParseException
      */
-    public void addIfMax() throws IOException, ParseException {
-        LabWork e = adder();
+    public void addIfMax(String name) throws IOException, ParseException {
+        Coordinates coordinates = addCoordinates();
+        Person author = addPerson();
+        int minimalPoint = addMinimalPoint();
+        int tunedInWorks = addTunedInWorks();
+        Difficulty difficulty = addDifficulty();
+        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         LabWork maximum = Collections.max(getRoot().getLabWorkSet(), compareByMinPoint);
         if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0) {
             getRoot().getLabWorkSet().add(e);
@@ -290,17 +282,29 @@ public class HelperController {
      *
      * @return
      */
-    private int addTunedInWorks() {
-        int tunedInWorks = 0;
+    private Integer addTunedInWorks() throws IOException {
+        Integer tunedInWorks = null;
         boolean flag = false;
-        while (!flag) {
-            System.out.println("Введите tunedInWorks(1-1000):");
-            tunedInWorks = checkOnInt();
-            if (tunedInWorks > 1 && tunedInWorks < 1000)
-                flag = true;
-            else
-                System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
-        }
+        System.out.println("Введите tunedInWorks(1-1000):");
+        String commandValue = reader.readLine();
+        if (!commandValue.trim().isEmpty())
+            while (!flag) {
+                    try {
+                        if (commandValue != null) {
+                            tunedInWorks = Integer.parseInt(commandValue);
+                        } else {
+                            System.out.println("Введите tunedInWorks(1-1000):");
+                            tunedInWorks = checkOnInt();
+                        }
+                        if (tunedInWorks > 0 && tunedInWorks < 1001) {
+                            flag = true;
+                        }
+                        commandValue = null;
+                    } catch (NumberFormatException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+
 
         return tunedInWorks;
     }
@@ -317,7 +321,7 @@ public class HelperController {
         while (!flag) {
             System.out.println("Введите minimalPoint(1-1000):");
             minimalPoint = checkOnInt();
-            if (minimalPoint > 1 && minimalPoint < 1000)
+            if (minimalPoint > 0 && minimalPoint < 1001)
                 flag = true;
             else
                 System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
@@ -334,10 +338,22 @@ public class HelperController {
      * @throws IOException
      */
     private Coordinates addCoordinates() throws IOException {
+        boolean flag = false;
         System.out.println("Введите координату x:");
         int x = checkOnInt();
-        System.out.println("Введите координату y:");
-        double y = checkOnDouble();
+        double y = 0;
+        while(!flag) {
+            try {
+                System.out.println("Введите координату y:");
+                y = checkOnDouble();
+                if (y < -184) {
+                    throw new InvalidFieldY("Field Y must be > -184 and con not be NULL");
+                }
+                flag = true;
+            } catch (InvalidFieldY e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         return new Coordinates(x, y);
     }
@@ -348,7 +364,7 @@ public class HelperController {
     public void save() {
         ParserToJson parserToJson = new ParserToJson();
 
-        if (parserToJson.serialization(getRoot().getLabWorkSet()))
+        if (parserToJson.serialization(getRoot().getLabWorkSet(), this.fileName))
             System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
         else
             System.out.println("Что-то пошлое не так :(");
@@ -360,7 +376,7 @@ public class HelperController {
      * @return
      * @throws IOException
      */
-    private Difficulty addDifficulty() throws IOException {
+    private Difficulty addDifficulty() {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
         String difficulty = checkOnEnum(Difficulty.class);
         return Difficulty.valueOf(difficulty);
@@ -375,18 +391,7 @@ public class HelperController {
      */
     private Person addPerson() throws IOException {
         System.out.println("Введите имя автора: ");
-        String name = null;
-        while (name == null) {
-            try {
-                name = reader.readLine();
-                if(name == null || name.isEmpty()){
-                    throw new RuntimeException("Пустая строка не может именем автора. Попробуй ещё раз.");
-                }
-            } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
-                name = null;
-            }
-        }
+        String name = reader.readLine();
 
         boolean flag = false;
         float height = 0;
@@ -607,34 +612,6 @@ public class HelperController {
         @Override
         public int compare(LabWork o1, LabWork o2) {
             return (int) (o1.getId() - o2.getId());
-        }
-    };
-
-    Comparator<LabWork> compareByTunedInWorks = new Comparator<LabWork>() {
-        @Override
-        public int compare(LabWork o1, LabWork o2) {
-            return o1.getTunedInWorks() - o2.getTunedInWorks();
-        }
-    };
-
-    Comparator<LabWork> compareByTunedInWorksReverse = new Comparator<LabWork>() {
-        @Override
-        public int compare(LabWork o1, LabWork o2) {
-            return o2.getTunedInWorks() - o1.getTunedInWorks();
-        }
-    };
-
-    Comparator<LabWork> compareByDifficulty = new Comparator<LabWork>() {
-        @Override
-        public int compare(LabWork o1, LabWork o2) {
-            return o1.getDifficulty().getLevel() - o2.getDifficulty().getLevel();
-        }
-    };
-
-    Comparator<LabWork> compareByDifficultyReverse = new Comparator<LabWork>() {
-        @Override
-        public int compare(LabWork o1, LabWork o2) {
-            return o2.getDifficulty().getLevel() - o1.getDifficulty().getLevel();
         }
     };
 
