@@ -3,6 +3,8 @@ package command.commands.noInputCommands;
 import command.Command;
 import command.commands.Invoker;
 
+import java.text.ParseException;
+
 public class Info extends Invoker {
 
     private Command getInfoCommand;
@@ -17,7 +19,7 @@ public class Info extends Invoker {
     }
 
     @Override
-    public void doCommand(String e) {
+    public void doCommand(String e) throws ParseException {
         getInfoCommand.execute();
     }
 

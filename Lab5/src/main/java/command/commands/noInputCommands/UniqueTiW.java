@@ -4,6 +4,8 @@ package command.commands.noInputCommands;
 import command.Command;
 import command.commands.Invoker;
 
+import java.text.ParseException;
+
 public class UniqueTiW extends Invoker {
     private Command printTiW;
     private static final String COMMAND_NAME = "PrintUniqueTunedInWorks";
@@ -17,12 +19,12 @@ public class UniqueTiW extends Invoker {
         this.printTiW = printTiW;
     }
 
-    public void printUniqueTunedInWorks(){
+    public void printUniqueTunedInWorks() throws ParseException {
         printTiW.execute();
     }
 
     @Override
-    public void doCommand(String e) {
+    public void doCommand(String e) throws ParseException {
         printTiW.execute();
     }
 }

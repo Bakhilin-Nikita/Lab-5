@@ -3,6 +3,8 @@ package command.commands.noInputCommands;
 import command.Command;
 import command.commands.Invoker;
 
+import java.text.ParseException;
+
 public class Clear extends Invoker {
     private Command clearUpCommand;
     private static final String COMMAND_NAME = Clear.class.getSimpleName();
@@ -17,12 +19,12 @@ public class Clear extends Invoker {
         this.clearUpCommand = clearUpCommand;
     }
 
-    public void clear(){
+    public void clear() throws ParseException {
         clearUpCommand.execute();
     }
 
     @Override
-    public void doCommand(String e) {
+    public void doCommand(String e) throws ParseException {
         clearUpCommand.execute();
     }
 }

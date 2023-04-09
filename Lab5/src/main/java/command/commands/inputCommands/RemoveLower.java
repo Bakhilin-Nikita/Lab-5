@@ -5,6 +5,8 @@ import command.Command;
 import command.ElementCommand;
 import command.commands.Invoker;
 
+import java.text.ParseException;
+
 public class RemoveLower extends Invoker {
     private Command removeLowerEl;
     private static final String COMMAND_NAME = RemoveLower.class.getSimpleName();
@@ -18,12 +20,12 @@ public class RemoveLower extends Invoker {
         this.removeLowerEl = removeLowerEl;
     }
 
-    public void removeLower(String e) {
+    public void removeLower(String e) throws ParseException {
         removeLowerEl.execute();
     }
 
     @Override
-    public void doCommand(String e) {
+    public void doCommand(String e) throws ParseException {
         removeLowerEl.execute();
     }
 }

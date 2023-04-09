@@ -76,17 +76,9 @@ public class HelperController {
         boolean flag = true;
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
-                System.out.println("Введите название Лабараторной работы: ");
-                String name = reader.readLine();
-                Coordinates coordinates = addCoordinates();
-                Person author = addPerson();
-                int minimalPoint = addMinimalPoint();
-                int tunedInWorks = addTunedInWorks();
-                Difficulty difficulty = addDifficulty();
-                LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+                LabWork e = adder();
 
                 lab.setName(e.getName());
-
                 lab.setAuthor(e.getAuthor());
                 lab.setCoordinates(e.getCoordinates());
                 lab.setDifficulty(e.getDifficulty());
@@ -101,6 +93,30 @@ public class HelperController {
             System.out.println("Элемент с данным ID отсутствует!");
         }
     }
+
+    private LabWork adder() throws IOException {
+        System.out.println("Введите название Лабораторной работы: ");
+        String name = null;
+        while (name == null) {
+            try {
+                name = reader.readLine();
+                if(name == null || name.isEmpty()){
+                    throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
+                }
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+                name = null;
+            }
+        }
+        Coordinates coordinates = addCoordinates();
+        Person author = addPerson();
+        int minimalPoint = addMinimalPoint();
+        int tunedInWorks = addTunedInWorks();
+        Difficulty difficulty = addDifficulty();
+        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+        return e;
+    }
+
 
     /**
      * Метод показывает все элементы коллекции.
@@ -151,30 +167,46 @@ public class HelperController {
      *
      * @param e
      */
-    public void removeGreater(String e) {
-        List<LabWork> labWorkList = new ArrayList<>(getRoot().getLabWorkSet());
+    /**
+     * Метод удаляет из коллекции все элементы, превышающие заданный.
+     *
+     */
+    public void removeGreater() throws IOException, ParseException {
+        System.out.println("Введите элемент для сравнения:");
+        LabWork comparableEl = adder();
+        List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.add(comparableEl);
+        labWorkList.addAll(getRoot().getLabWorkSet());
+        labWorkList.sort(compareByDifficultyReverse);
         labWorkList.sort(compareByMinPointReverse);
+        labWorkList.sort(compareByTunedInWorksReverse);
+
         for (LabWork el : labWorkList) {
-            if (el.getName().equals(e)) {
+            if (el.equals(comparableEl)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
         }
-        System.out.println("Все элементы выше данного, были удаленны.");
+
+        System.out.println("Все элементы, большие данного, были удалены.");
     }
 
     /**
      * Метод удаляет все элементы меньшие чем заданный.
      *
-     * @param e
      */
-    public void removeLower(String e) {
+    public void removeLower() throws IOException {
+        System.out.println("Введите элемент для сравнения:");
+        LabWork comparableEl = adder();
         List<LabWork> labWorkList = new ArrayList<>();
+        labWorkList.add(comparableEl);
         labWorkList.addAll(getRoot().getLabWorkSet());
-        labWorkList.sort(compareByName);
+        labWorkList.sort(compareByDifficulty);
+        labWorkList.sort(compareByMinPoint);
+        labWorkList.sort(compareByTunedInWorks);
 
         for (LabWork el : labWorkList) {
-            if (el.getName().equals(e)) {
+            if (el.equals(comparableEl)) {
                 break;
             }
             getRoot().getLabWorkSet().remove(el);
@@ -212,16 +244,8 @@ public class HelperController {
      * @see #addTunedInWorks()
      * @see #addPerson()
      */
-    public void addElement(String e) throws IOException {
-        System.out.println("Введите название Лабараторной работы: ");
-        String name = reader.readLine();
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
-        int id = generateId();
-        LabWork lab = new LabWork(id, name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+    public void addElement() throws IOException, ParseException {
+        LabWork lab = adder();
 
         if (getRoot().getLabWorkSet().add(lab))
             System.out.println("Элемент успешно добавлен в коллекцию!");
@@ -258,17 +282,11 @@ public class HelperController {
     /**
      * Добавить элемент в коллекцию, если он больше остальных. Сравнивая по
      *
-     * @param name
      * @throws IOException
      * @throws ParseException
      */
-    public void addIfMax(String name) throws IOException, ParseException {
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        int tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
-        LabWork e = new LabWork(name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
+    public void addIfMax() throws IOException, ParseException {
+        LabWork e = adder();
         LabWork maximum = Collections.max(getRoot().getLabWorkSet(), compareByMinPoint);
         if ((e.getMinimalPoint() - maximum.getMinimalPoint()) > 0) {
             getRoot().getLabWorkSet().add(e);
@@ -278,8 +296,6 @@ public class HelperController {
 
     /**
      * Метод обрабатывает поле
-     * Дополнительный метод для {@link #addElement(String)}
-     *
      * @return
      */
     private Integer addTunedInWorks() throws IOException {
@@ -584,6 +600,7 @@ public class HelperController {
     }
 
 
+
     Comparator<LabWork> compareByName = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
@@ -612,6 +629,34 @@ public class HelperController {
         @Override
         public int compare(LabWork o1, LabWork o2) {
             return (int) (o1.getId() - o2.getId());
+        }
+    };
+
+    Comparator<LabWork> compareByTunedInWorks = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o1.getTunedInWorks() - o2.getTunedInWorks();
+        }
+    };
+
+    Comparator<LabWork> compareByTunedInWorksReverse = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o2.getTunedInWorks() - o1.getTunedInWorks();
+        }
+    };
+
+    Comparator<LabWork> compareByDifficulty = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o1.getDifficulty().getLevel() - o2.getDifficulty().getLevel();
+        }
+    };
+
+    Comparator<LabWork> compareByDifficultyReverse = new Comparator<LabWork>() {
+        @Override
+        public int compare(LabWork o1, LabWork o2) {
+            return o2.getDifficulty().getLevel() - o1.getDifficulty().getLevel();
         }
     };
 
