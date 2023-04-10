@@ -4,7 +4,9 @@ import command.commands.*;
 import command.commands.noInputCommands.help.*;
 import command.inputCmdCollection.*;
 import command.noInputCmdCollection.NoInputCommands;
+import exceptions.NotJsonFile;
 import object.LabWork;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
@@ -38,6 +40,7 @@ public class Controller {
      * @see LabWork
      */
     public Controller(String file) throws IOException {
+        getExtensionByApacheCommonLib(file);
         this.file = file;
         if (parserFromJson.checkOnEmpty(this.file)) {
             root = parserFromJson.parse(this.file);
@@ -161,6 +164,18 @@ public class Controller {
         return false;
     }
 
+    public void getExtensionByApacheCommonLib(String filename) {
+        try {
+            if (!FilenameUtils.getExtension(filename).equals("json"))
+            {
+                throw new NotJsonFile("Файл должен быть с расширением json");
+            }
+        } catch (NotJsonFile e) {
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
+    }
+
     public void setRoot(Root root) {
         this.root = root;
     }
@@ -196,6 +211,8 @@ public class Controller {
     public void setExecuteScript(ExecuteScript executeScript) {
         this.executeScript = executeScript;
     }
+
+
 
     @Override
     public String toString() {

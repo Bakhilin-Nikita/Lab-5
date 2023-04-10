@@ -12,17 +12,15 @@ import org.json.simple.parser.ParseException;
 import parser.Root;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
- * Метод парсит данные из json файла в коллекцию {@link Root#labWorkSet}
+ * Метод парсит данные из json файла в коллекцию {@link Root#getLabWorkSet()}
  * Ключевой метод для работы с коллекцией.
  */
 
 public class ParserFromJson {
-
-
 
     /**
      * Метод обращается к файлу notes.json, использует его в качестве базы данных объектов.
@@ -35,7 +33,6 @@ public class ParserFromJson {
         File file = new File(fileName);
         if (file.exists())
             try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
-
                 JSONArray labsJsonArray = (JSONArray) parser.parse(reader);
 
                 HashSet<LabWork> labWorks = new HashSet<>();
@@ -70,6 +67,9 @@ public class ParserFromJson {
 
                 root.setLabWorkSet(labWorks);
 
+                // проверка на уникальность по полю id
+                checkOnIdentify(labWorks);
+
                 root.setValid(true);
 
                 return root;
@@ -90,8 +90,8 @@ public class ParserFromJson {
      * @return boolean
      */
     public boolean checkOnEmpty(String fileName) {
-
         try {
+
             File file = new File(fileName);
             BufferedReader br = new BufferedReader(new FileReader(file));
 
@@ -108,4 +108,29 @@ public class ParserFromJson {
         }
     }
 
+    /**
+     * Метод проверяет наличие одинаковых id {@link LabWork#getId()}
+     * Если программа находит таковые, завершает свою работу.
+     * @param labWorks
+     */
+    private void checkOnIdentify(HashSet<LabWork> labWorks) {
+        ArrayList<Integer> idLabs = new ArrayList<>();
+
+        for (LabWork lab: labWorks) {
+            idLabs.add((int) lab.getId());
+        }
+
+
+        for (Integer id: idLabs) {
+            for (int i = id+1; i < idLabs.size(); i++) {
+                try {
+                        if (id.equals(idLabs.get(i)))
+                            throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                        System.exit(0);
+                    }
+            }
+        }
+    }
 }

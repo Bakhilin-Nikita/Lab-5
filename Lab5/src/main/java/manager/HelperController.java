@@ -263,7 +263,9 @@ public class HelperController {
         for (LabWork lab : getRoot().getLabWorkSet())
             labs.put((int) lab.getId(), lab);
         labs = sortByKeys(labs);
-        return labs.size() + 1;
+        if (labs.size() == 0)
+            return 0;
+        return labs.size();
     }
 
     /**
@@ -422,11 +424,11 @@ public class HelperController {
         while (!flag) {
             System.out.println("Введите рост автора: ");
             float h = checkOnFloat();
-            if (h > 67.08 && h < 272) {
+            if ( h < 272 && h > 0 ) {
                 flag = true;
                 height = h;
             } else {
-                System.out.println("Вы ввели неправильный рост! Доступно в интервале 67.08 до 272.");
+                System.out.println("Вы ввели неправильный рост! Доступно в интервале от 0 до 272.");
             }
         }
 

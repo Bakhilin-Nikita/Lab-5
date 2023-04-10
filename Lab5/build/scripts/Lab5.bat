@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\Lab5-1.0-SNAPSHOT.jar;%APP_HOME%\lib\json-simple-1.1.1.jar;%APP_HOME%\lib\gson-2.7.jar;%APP_HOME%\lib\commons-lang3-3.0.jar;%APP_HOME%\lib\junit-4.10.jar;%APP_HOME%\lib\hamcrest-core-1.1.jar
+set CLASSPATH=%APP_HOME%\lib\Lab5-1.0-SNAPSHOT.jar;%APP_HOME%\lib\json-simple-1.1.1.jar;%APP_HOME%\lib\gson-2.7.jar;%APP_HOME%\lib\commons-lang3-3.0.jar;%APP_HOME%\lib\commons-io-2.6.jar;%APP_HOME%\lib\junit-4.10.jar;%APP_HOME%\lib\hamcrest-core-1.1.jar
 
 
 @rem Execute Lab5
