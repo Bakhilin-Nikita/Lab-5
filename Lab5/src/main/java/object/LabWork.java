@@ -55,7 +55,8 @@ public class LabWork {
         this.author = Objects.requireNonNull(author);
         this.difficulty = Objects.requireNonNull(difficulty);
 
-        this.tunedInWorks = tunedInWorks.intValue();
+        if (tunedInWorks != null)
+            this.tunedInWorks = tunedInWorks.intValue();
 
         ZonedDateTime date = ZonedDateTime.now();
 
@@ -73,6 +74,9 @@ public class LabWork {
         this.author = Objects.requireNonNull(author);
         this.difficulty = Objects.requireNonNull(difficulty);
         ZonedDateTime date = ZonedDateTime.now();
+
+        if (tunedInWorks != null)
+            this.tunedInWorks = tunedInWorks.intValue();
 
         DateTimeFormatter formatter = DateTimeFormatter.
                 ofPattern(DateTimeFormatter.

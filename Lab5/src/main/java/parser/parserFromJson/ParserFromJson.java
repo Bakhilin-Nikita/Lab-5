@@ -14,6 +14,7 @@ import parser.Root;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Метод парсит данные из json файла в коллекцию {@link Root#getLabWorkSet()}
@@ -124,10 +125,12 @@ public class ParserFromJson {
 
 
         for (Integer id: idLabs) {
+            System.out.println(id);
             for (int i = id+1; i < idLabs.size(); i++) {
+                System.out.println("id object=" + idLabs.get(i)+ " id=" + id);
                 try {
-                        if (id.equals(idLabs.get(i)))
-                            throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");
+                    if (id.equals(idLabs.get(i)))
+                        throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");
                     } catch (IOException e) {
                         System.out.println(e.getMessage());
                         System.exit(0);
@@ -143,8 +146,8 @@ public class ParserFromJson {
      * @param labWorks
      */
     private void validation(HashSet<LabWork> labWorks) {
-        boolean flag = false;
         checkOnIdentify(labWorks);
+        boolean flag = false;
         for (LabWork labWork: labWorks) {
             if (labWork.getTunedInWorks() != null)
                 if (labWork.getTunedInWorks() < 0 || labWork.getTunedInWorks() > 1001)
