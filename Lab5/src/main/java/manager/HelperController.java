@@ -263,9 +263,15 @@ public class HelperController {
         for (LabWork lab : getRoot().getLabWorkSet())
             labs.put((int) lab.getId(), lab);
         labs = sortByKeys(labs);
+        Integer size = labs.size();
+        for (Map.Entry<Integer, LabWork> entry : labs.entrySet()){
+            if(size.equals(entry.getKey())){
+                size += 1;
+            }
+        }
         if (labs.size() == 0)
             return 0;
-        return labs.size();
+        return size;
     }
 
     /**
