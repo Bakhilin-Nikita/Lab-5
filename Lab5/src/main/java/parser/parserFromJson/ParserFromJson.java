@@ -14,6 +14,7 @@ import parser.Root;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Метод парсит данные из json файла в коллекцию {@link Root#getLabWorkSet()}
@@ -23,7 +24,7 @@ import java.util.HashSet;
 public class ParserFromJson {
 
     /**
-     * Метод обращается к файлу notes.json, использует его в качестве базы данных объектов.
+     * Метод обращается к файлу, использует его в качестве базы данных объектов.
      * @return
      * @throws IOException
      */
@@ -42,7 +43,7 @@ public class ParserFromJson {
                     // at the first parsing primitive type of json file
                     long id = (Long) labJsonObject.get("id");
                     long minimalPoint = (Long) labJsonObject.get("minimalPoint");
-                    long tunedInWorks = (Long) labJsonObject.get("tunedInWorks");
+                    Long tunedInWorks = (Long) labJsonObject.get("tunedInWorks");
                     String name = (String) labJsonObject.get("name");
                     String creationDate = (String) labJsonObject.get("creationDateString");
                     String difficulty = (String) labJsonObject.get("difficulty");
@@ -60,25 +61,27 @@ public class ParserFromJson {
                     double height = (Double) personJsonObject.get("height");
                     String dataBirthday = (String) personJsonObject.get("birthday");
 
-                    LabWork labWork = new LabWork((int) id, name, (int) minimalPoint, (int) tunedInWorks, Difficulty.valueOf(difficulty), new Coordinates((int) x, y), new Person(nameAuthor, Color.valueOf(color), height, dataBirthday), creationDate);
+                    LabWork labWork = new LabWork((int) id, name, (int) minimalPoint,  tunedInWorks, Difficulty.valueOf(difficulty), new Coordinates((int) x, y), new Person(nameAuthor, Color.valueOf(color), height, dataBirthday), creationDate);
 
                     labWorks.add(labWork);
                 }
 
-                root.setLabWorkSet(labWorks);
+                validation(labWorks);
 
-                // проверка на уникальность по полю id
-                checkOnIdentify(labWorks);
+                root.setLabWorkSet(labWorks);
 
                 root.setValid(true);
 
                 return root;
             } catch (ParseException | NullPointerException e) {
                 System.out.println("Невалидный файл json!");
+                System.out.println(e.getMessage());
+                e.printStackTrace();
                 root.setValid(false);
             } catch(IllegalArgumentException | ClassCastException e) {
-                System.out.println("Проблема с парсингом из файла -->");
+                System.out.println("Невалидные данные -->");
                 System.out.println(e.getMessage());
+                e.printStackTrace();
                 root.setValid(false);
             }
         return root;
@@ -122,15 +125,46 @@ public class ParserFromJson {
 
 
         for (Integer id: idLabs) {
+            System.out.println(id);
             for (int i = id+1; i < idLabs.size(); i++) {
+                System.out.println("id object=" + idLabs.get(i)+ " id=" + id);
                 try {
-                        if (id.equals(idLabs.get(i)))
-                            throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");
+                    if (id.equals(idLabs.get(i)))
+                        throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");
                     } catch (IOException e) {
                         System.out.println(e.getMessage());
                         System.exit(0);
                     }
             }
+        }
+    }
+
+
+    /**
+     * Проверяет все поля объекта на валидные данные.
+     * Прекращает работу программы в случае невалидных данных.
+     * @param labWorks
+     */
+    private void validation(HashSet<LabWork> labWorks) {
+        checkOnIdentify(labWorks);
+        boolean flag = false;
+        for (LabWork labWork: labWorks) {
+            if (labWork.getTunedInWorks() != null)
+                if (labWork.getTunedInWorks() < 0 || labWork.getTunedInWorks() > 1001)
+                    flag = true;
+            if (labWork.getCoordinates().getY() < -184)
+                flag = true;
+            if (labWork.getAuthor().getHeight() < 0 || labWork.getAuthor().getHeight() > 273)
+                flag = true;
+            if (labWork.getMinimalPoint() < 0 || labWork.getMinimalPoint() > 1000)
+                flag = true;
+            if (labWork.getName().trim().isEmpty())
+                flag = true;
+        }
+
+        if (flag){
+            System.out.println("Файл не прошел валидацию.");
+            System.exit(0);
         }
     }
 }

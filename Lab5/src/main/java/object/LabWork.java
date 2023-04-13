@@ -24,14 +24,15 @@ public class LabWork {
 
     private String creationDateString;  //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
-    public LabWork(int id, String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author, String creationDateString) {
+    public LabWork(int id, String name, int minimalPoint, Long tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author, String creationDateString) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;
         this.author = Objects.requireNonNull(author);
-        this.tunedInWorks = tunedInWorks;
         this.difficulty = Objects.requireNonNull(difficulty);
+        if (tunedInWorks != null)
+            this.tunedInWorks = tunedInWorks.intValue();
 
         if (creationDateString.isEmpty()) {
             ZonedDateTime date = ZonedDateTime.now();
@@ -46,15 +47,16 @@ public class LabWork {
         }
     }
 
-    public LabWork(int id, String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+    public LabWork(int id, String name, int minimalPoint,Long tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;
         this.author = Objects.requireNonNull(author);
-        this.tunedInWorks = tunedInWorks;
         this.difficulty = Objects.requireNonNull(difficulty);
 
+        if (tunedInWorks != null)
+            this.tunedInWorks = tunedInWorks.intValue();
 
         ZonedDateTime date = ZonedDateTime.now();
 
@@ -65,14 +67,16 @@ public class LabWork {
         this.creationDateString = date.format(formatter);
     }
 
-    public LabWork(String name, int minimalPoint, Integer tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
+    public LabWork(String name, int minimalPoint, Long tunedInWorks, Difficulty difficulty, Coordinates coordinates, Person author) {
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.minimalPoint = minimalPoint;
         this.author = Objects.requireNonNull(author);
-        this.tunedInWorks = tunedInWorks; // I do not understand what is it
         this.difficulty = Objects.requireNonNull(difficulty);
         ZonedDateTime date = ZonedDateTime.now();
+
+        if (tunedInWorks != null)
+            this.tunedInWorks = tunedInWorks.intValue();
 
         DateTimeFormatter formatter = DateTimeFormatter.
                 ofPattern(DateTimeFormatter.
@@ -137,11 +141,11 @@ public class LabWork {
         return this.minimalPoint;
     }
 
-    public void setTunedInWorks(int tunedInWorks) {
+    public void setTunedInWorks(Integer tunedInWorks) {
         this.tunedInWorks = tunedInWorks;
     }
 
-    public int getTunedInWorks() {
+    public Integer getTunedInWorks() {
         return this.tunedInWorks;
     }
 

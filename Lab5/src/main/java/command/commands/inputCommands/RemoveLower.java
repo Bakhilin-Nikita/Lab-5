@@ -1,8 +1,10 @@
 package command.commands.inputCommands;
 
+/**
+ * Класс для удаления меньшего чем заданный пользователем.
+ */
 
 import command.Command;
-import command.ElementCommand;
 import command.commands.Invoker;
 
 import java.text.ParseException;

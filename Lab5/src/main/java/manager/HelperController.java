@@ -111,7 +111,7 @@ public class HelperController {
         Coordinates coordinates = addCoordinates();
         Person author = addPerson();
         int minimalPoint = addMinimalPoint();
-        Integer tunedInWorks = addTunedInWorks();
+        Long tunedInWorks = addTunedInWorks();
         Difficulty difficulty = addDifficulty();
         LabWork e = new LabWork(generateId(), name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         return e;
@@ -306,8 +306,8 @@ public class HelperController {
      * Метод обрабатывает поле
      * @return
      */
-    private Integer addTunedInWorks() throws IOException {
-        Integer tunedInWorks = null;
+    private Long addTunedInWorks() throws IOException {
+        Long tunedInWorks = null;
         boolean flag = false;
         System.out.println("Введите tunedInWorks(1-1000):");
         String commandValue = reader.readLine();
@@ -315,15 +315,17 @@ public class HelperController {
             while (!flag) {
                     try {
                         if (commandValue != null) {
-                            tunedInWorks = Integer.parseInt(commandValue);
+                            String num = commandValue;
+                            commandValue = null;
+                            tunedInWorks = Long.parseLong(num);
                         } else {
                             System.out.println("Введите tunedInWorks(1-1000):");
-                            tunedInWorks = checkOnInt();
+                            tunedInWorks = checkOnLong();
                         }
                         if (tunedInWorks > 0 && tunedInWorks < 1001) {
                             flag = true;
                         }
-                        commandValue = null;
+                        //commandValue = null;
                     } catch (NumberFormatException e) {
                         System.out.println(e.getMessage());
                     }
@@ -370,8 +372,8 @@ public class HelperController {
             try {
                 System.out.println("Введите координату y:");
                 y = checkOnDouble();
-                if (y > -184) {
-                    throw new InvalidFieldY("Field Y must be < -184 and con not be NULL");
+                if (y < -184) {
+                    throw new InvalidFieldY("Field Y must be > -184 and can not be NULL");
                 }
                 flag = true;
             } catch (InvalidFieldY e) {
@@ -478,6 +480,19 @@ public class HelperController {
             }
         }
 
+        return y;
+    }
+
+    private Long checkOnLong() {
+        long y = 0;
+        boolean flag = false;
+        while (!flag)
+            try {
+                y = Long.parseLong(reader.readLine());
+                flag = true;
+            } catch (NumberFormatException | IOException e) {
+                flag = false;
+            }
         return y;
     }
 

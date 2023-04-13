@@ -5,6 +5,8 @@ import command.Command;
 import command.ElementCommand;
 import manager.HelperController;
 
+import java.io.IOException;
+
 public class RemoveLowerElementCommand implements Command {
     private HelperController helperController;
 
@@ -14,7 +16,11 @@ public class RemoveLowerElementCommand implements Command {
 
     @Override
     public void execute() {
-        //helperController.removeLower();
+        try {
+            helperController.removeLower();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
