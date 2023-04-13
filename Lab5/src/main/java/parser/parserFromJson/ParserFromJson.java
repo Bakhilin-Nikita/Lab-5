@@ -76,12 +76,10 @@ public class ParserFromJson {
             } catch (ParseException | NullPointerException e) {
                 System.out.println("Невалидный файл json!");
                 System.out.println(e.getMessage());
-                e.printStackTrace();
                 root.setValid(false);
             } catch(IllegalArgumentException | ClassCastException e) {
                 System.out.println("Невалидные данные -->");
                 System.out.println(e.getMessage());
-                e.printStackTrace();
                 root.setValid(false);
             }
         return root;
