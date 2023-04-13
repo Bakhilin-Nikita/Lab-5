@@ -63,6 +63,7 @@ public class ExecuteScript extends Invoker {
 
             // читаем первую строку из файла
             String cmd = getHelperController().getReader().readLine();
+            boolean flag = false;
 
             if (cmd != null) {
                 while (cmd != null) {
@@ -74,7 +75,11 @@ public class ExecuteScript extends Invoker {
                             if (cmd.equals(key)) {
                                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
                                 entry.getValue().doCommand(cmd);
+                                flag = true;
                             }
+                        } if (flag == false) {
+                            System.out.println("У команды в скрипте не должно быть входных данных!");
+                            break;
                         }
 
                         for (Map.Entry<String, Invoker> entry : getInputCommands().entrySet()) {
