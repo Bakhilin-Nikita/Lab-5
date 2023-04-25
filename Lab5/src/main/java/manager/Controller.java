@@ -11,6 +11,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
 import java.io.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.text.ParseException;
 import java.util.*;
 
@@ -31,6 +33,7 @@ public class Controller {
     private Root root; // Не может быть null
     private ExecuteScript executeScript; // Не может быть null
 
+    DatagramSocket socket = new DatagramSocket(1057);
 
     /**
      * В конструкторе происходит автоматическая проверка json-файла.
@@ -66,7 +69,11 @@ public class Controller {
             boolean flag = false;
             help.execute();
             while (!flag) {
-                String cmd = reformatCmd(reader.readLine()).trim();
+                DatagramPacket packet = new DatagramPacket(new byte[1000], 1000);
+                socket.receive(packet);
+                String data = new String(packet.getData()).trim();
+                System.out.println(data);
+                String cmd = reformatCmd(data).trim();
                 String[] arr = cmd.split(" ", 2);
                 if (arr[0].equals("execute_script")) {
                     getExecuteScript().execute(arr[1]);
