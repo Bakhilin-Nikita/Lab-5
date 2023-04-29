@@ -131,6 +131,7 @@ public class HelperController {
      */
     public void show() {
         List<LabWork> labWorkList = new ArrayList<>();
+        List<String> h = new ArrayList<>();
         labWorkList.addAll(getRoot().getLabWorkSet());
 
         if (labWorkList.isEmpty()) {
@@ -141,12 +142,13 @@ public class HelperController {
             }
         } else {
             labWorkList.sort(compareByID);
-            for (LabWork lab : labWorkList) {
-                try {
-                    getServer().sentToClient(lab.toString());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            try {
+                for (LabWork lab: labWorkList){
+                    h.add(lab.toString());
                 }
+                getServer().sentToClient(h.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -688,12 +690,14 @@ public class HelperController {
      * @param collection
      */
     private void printCollection(Collection<Integer> collection) {
+        List<String> list = new ArrayList<>();
         for (Integer i : collection){
-            try {
-                getServer().sentToClient(i.toString()+"\n");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            list.add(i.toString());
+        }
+        try {
+            getServer().sentToClient(list.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
