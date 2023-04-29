@@ -3,6 +3,8 @@ package command.commands.noInputCommands;
 import manager.HelperController;
 import command.commands.Invoker;
 
+import java.io.IOException;
+
 public class Save extends Invoker {
     private HelperController helperController;
 
@@ -18,6 +20,10 @@ public class Save extends Invoker {
 
     @Override
     public void doCommand(String e) {
-        helperController.save();
+        try {
+            helperController.save();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

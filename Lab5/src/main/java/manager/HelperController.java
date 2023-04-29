@@ -1,5 +1,6 @@
 package manager;
 
+import command.commands.noInputCommands.help.Help;
 import exceptions.InvalidFieldY;
 import object.Coordinates;
 import object.LabWork;
@@ -13,6 +14,7 @@ import parser.parserToJson.ParserToJson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.text.ParseException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -27,18 +29,23 @@ public class HelperController {
     private ArrayList<String> paths = new ArrayList<>(); // Не может быть null
     private BufferedReader reader; // Не может быть null
 
-    private final String fileName;
+    private Server server;
+
+    private  String fileName;
+
+    public HelperController() throws IOException {}
 
     /**
      * Конструктор создает объект который выгружает данные из файла в нашу переменную.
      * Устанавливает директорию корневую.
      */
-    public HelperController(String file, Root root) throws IOException {
+    public HelperController(String file, Root root, Server server) throws IOException {
         this.fileName = file;
         ParserFromJson parserFromJson = new ParserFromJson();
         this.root = root;
         this.reader = new BufferedReader(new InputStreamReader(System.in));
         this.paths.add(System.getProperty("user.dir"));
+        this.server = server;
     }
 
     /**
@@ -95,16 +102,16 @@ public class HelperController {
     }
 
     private LabWork adder() throws IOException {
-        System.out.println("Введите название Лабораторной работы: ");
+        getServer().sentToClient("Введите название Лабораторной работы: ");
         String name = null;
         while (name == null) {
             try {
-                name = reader.readLine().trim();
+                name = getServer().dataFromClient().trim();
                 if(name == null || name.isEmpty()){
                     throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
                 }
             } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
+                getServer().sentToClient(e.getMessage());
                 name = null;
             }
         }
@@ -152,14 +159,35 @@ public class HelperController {
     /**
      * Метод info: получение информации о коллекции
      */
-    public void getInfo() {
+    public void getInfo() throws IOException {
         if (getRoot().getLabWorkSet().isEmpty()) {
-            System.out.println("Информация по коллекции не найдена! Возможно она удаленна.");
+            getServer().sentToClient("Информация по коллекции не найдена! Возможно она удаленна.");
         } else {
-            System.out.println("Тип коллекции: " + getRoot().getLabWorkSet().getClass().getSimpleName());
-            System.out.println("Дата инициализации: " + getCreationDate());
-            System.out.println("Количество элементов: " + getRoot().getLabWorkSet().size());
+            getServer().sentToClient("Тип коллекции: " + getRoot().getLabWorkSet().getClass().getSimpleName() +
+                    "Дата инициализации: " + getCreationDate() +
+                    "Количество элементов: " + getRoot().getLabWorkSet().size()
+            );
         }
+    }
+
+    public void getHelp() throws IOException {
+        getServer().sentToClient("Доступные  команды\n" +
+                "help : вывести справку по доступным командам\n" +
+                "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
+                "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
+                "add {element} : добавить новый элемент в коллекцию\n" +
+                "update id {element} : обновить значение элемента коллекции, id которого равен заданному\n" +
+                "remove_by_id id : удалить элемент из коллекции по его id\n" +
+                "clear : очистить коллекцию\n" +
+                "save : сохранить коллекцию в файл\n" +
+                "execute_script file_name : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.\n" +
+                "exit : завершить программу (без сохранения в файл)\n" +
+                "add_if_max {element} : добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции\n" +
+                "remove_greater {element} : удалить из коллекции все элементы, превышающие заданный\n" +
+                "remove_lower {element} : удалить из коллекции все элементы, меньшие, чем заданный\n" +
+                "max_by_author : вывести любой объект из коллекции, значение поля author которого является максимальным\n" +
+                "print_unique_tuned_in_works : вывести уникальные значения поля tunedInWorks всех элементов в коллекции\n" +
+                "print_field_ascending_tuned_in_works : вывести значения поля tunedInWorks всех элементов в порядке возрастания");
     }
 
     /**
@@ -248,9 +276,9 @@ public class HelperController {
         LabWork lab = adder();
 
         if (getRoot().getLabWorkSet().add(lab))
-            System.out.println("Элемент успешно добавлен в коллекцию!");
+            getServer().sentToClient("Элемент успешно добавлен в коллекцию!");
         else
-            System.out.println("К сожалению, что-то пошло не так. Попробуйте еще раз!");
+            getServer().sentToClient("К сожалению, что-то пошло не так. Попробуйте еще раз!");
     }
 
     /**
@@ -309,8 +337,8 @@ public class HelperController {
     private Long addTunedInWorks() throws IOException {
         Long tunedInWorks = null;
         boolean flag = false;
-        System.out.println("Введите tunedInWorks(1-1000):");
-        String commandValue = reader.readLine();
+        getServer().sentToClient("Введите tunedInWorks(1-1000):");
+        String commandValue = getServer().dataFromClient().trim();
         if (!commandValue.trim().isEmpty())
             while (!flag) {
                     try {
@@ -319,7 +347,7 @@ public class HelperController {
                             commandValue = null;
                             tunedInWorks = Long.parseLong(num);
                         } else {
-                            System.out.println("Введите tunedInWorks(1-1000):");
+                            getServer().sentToClient("Введите tunedInWorks(1-1000):");
                             tunedInWorks = checkOnLong();
                         }
                         if (tunedInWorks > 0 && tunedInWorks < 1001) {
@@ -327,7 +355,7 @@ public class HelperController {
                         }
                         //commandValue = null;
                     } catch (NumberFormatException e) {
-                        System.out.println(e.getMessage());
+                        getServer().sentToClient(e.getMessage().trim());
                     }
                 }
 
@@ -336,21 +364,21 @@ public class HelperController {
     }
 
     /**
-     * Метод обрабатывает поле {@link LabWork#minimalPoint}
-     * Дополнительный метод для {@link #addElement(String)}
+     * Метод обрабатывает поле {@link LabWork#getMinimalPoint()}
+     * Дополнительный метод для {@link #addElement()}
      *
      * @return
      */
-    private int addMinimalPoint() {
+    private int addMinimalPoint() throws IOException {
         int minimalPoint = 0;
         boolean flag = false;
         while (!flag) {
-            System.out.println("Введите minimalPoint(1-1000):");
+            getServer().sentToClient("Введите minimalPoint(1-1000):");
             minimalPoint = checkOnInt();
             if (minimalPoint > 0 && minimalPoint < 1001)
                 flag = true;
             else
-                System.out.println("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
+                getServer().sentToClient("Вы ввели неккоректное число! Число не может быть отрицательным, или равно нулю.");
         }
 
         return minimalPoint;
@@ -365,19 +393,20 @@ public class HelperController {
      */
     private Coordinates addCoordinates() throws IOException {
         boolean flag = false;
-        System.out.println("Введите координату x:");
+        getServer().sentToClient("Введите координату x: ");
         int x = checkOnInt();
         double y = 0;
         while(!flag) {
             try {
-                System.out.println("Введите координату y:");
+                getServer().sentToClient("Введите координату y: ");
                 y = checkOnDouble();
+
                 if (y < -184) {
                     throw new InvalidFieldY("Field Y must be > -184 and can not be NULL");
                 }
                 flag = true;
             } catch (InvalidFieldY e) {
-                System.out.println(e.getMessage());
+                getServer().sentToClient(e.getMessage());
             }
         }
 
@@ -387,13 +416,13 @@ public class HelperController {
     /**
      * Метод сохраняет коллекцию в файл.
      */
-    public void save() {
+    public void save() throws IOException {
         ParserToJson parserToJson = new ParserToJson();
 
         if (parserToJson.serialization(getRoot().getLabWorkSet(), this.fileName))
-            System.out.println("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
+            getServer().sentToClient("Коллекция " + getRoot().getLabWorkSet().getClass().getSimpleName() + " успешно сохранена в файл!");
         else
-            System.out.println("Что-то пошлое не так :(");
+            getServer().sentToClient("Что-то пошлое не так :(");
     }
 
     /**
@@ -402,8 +431,8 @@ public class HelperController {
      * @return
      * @throws IOException
      */
-    private Difficulty addDifficulty() {
-        System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
+    private Difficulty addDifficulty() throws IOException {
+        getServer().sentToClient("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
         String difficulty = checkOnEnum(Difficulty.class);
         return Difficulty.valueOf(difficulty);
     }
@@ -419,44 +448,51 @@ public class HelperController {
         boolean flag = false;
         String name = null;
         while(!flag) {
-            System.out.println("Введите имя автора: ");
-            name = reader.readLine().trim();
+            getServer().sentToClient("Введите имя автора: ");
+            name = getServer().dataFromClient().trim();
             if (!name.isEmpty())
                 flag = true;
             else
-                System.out.println("Поле имя автора не может быть пустым");
+                getServer().sentToClient("Поле имя автора не может быть пустым");
         }
 
         flag = false;
         float height = 0;
         while (!flag) {
-            System.out.println("Введите рост автора: ");
-            float h = checkOnFloat();
-            if ( h < 272 && h > 0 ) {
-                flag = true;
-                height = h;
-            } else {
-                System.out.println("Вы ввели неправильный рост! Доступно в интервале от 0 до 272.");
+            getServer().sentToClient("Введите рост автора: ");
+            Float h = checkOnFloat();
+            try {
+                if (h.isInfinite())
+                    throw new IllegalArgumentException("Некорректный ввод. Повторите попытку.");
+                if ( h < 272 && h > 0 ) {
+                    flag = true;
+                    height = h;
+                } else {
+                    getServer().sentToClient("Вы ввели неправильный рост! Доступно в интервале от 0 до 272.");
+                }
+            } catch (IllegalArgumentException e) {
+                getServer().sentToClient(e.getMessage());
             }
         }
+
 
         String date = null;
         LocalDate birthday = null;
         while (date == null) {
             try {
-                System.out.println("Введите дату рождения автора (гггг-мм-дд): ");
-                birthday = LocalDate.parse(reader.readLine());
+                getServer().sentToClient("Введите дату рождения автора (гггг-мм-дд): ");
+                birthday = LocalDate.parse(getServer().dataFromClient());
                 String[] dateSplit = birthday.toString().split("-");
                 if (Integer.parseInt(dateSplit[0]) >= 1907 && Integer.parseInt(dateSplit[0]) < 2015)
                     date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
                 else
-                    System.out.println("Ты не мог родиться в такой год. Самый старый человек родился в 1907 году.Мария Браньяс Морера");
+                    getServer().sentToClient("Ты не мог родиться в такой год. Самый старый человек родился в 1907 году.Мария Браньяс Морера");
             } catch (DateTimeException e) {
-                System.out.println(e.getMessage());
+                getServer().sentToClient(e.getMessage());
             }
         }
 
-        System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
+        getServer().sentToClient("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
 
         String color = checkOnEnum(Color.class);
 
@@ -473,10 +509,12 @@ public class HelperController {
         boolean flag = false;
         while (!flag) {
             try {
-                y = Double.parseDouble(reader.readLine());
+                y = Double.parseDouble(getServer().dataFromClient().trim());
                 flag = true;
-            } catch (IOException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 flag = false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -488,10 +526,12 @@ public class HelperController {
         boolean flag = false;
         while (!flag)
             try {
-                y = Long.parseLong(reader.readLine());
+                y = Long.parseLong(getServer().dataFromClient().trim());
                 flag = true;
-            } catch (NumberFormatException | IOException e) {
+            } catch (NumberFormatException e) {
                 flag = false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         return y;
     }
@@ -506,7 +546,9 @@ public class HelperController {
         boolean flag = false;
         while (!flag)
             try {
-                y = Integer.parseInt(reader.readLine());
+                getServer().sentToClient("Waiting...");
+                y = Integer.parseInt(getServer().dataFromClient());
+                getServer().sentToClient("Int value: " + y);
                 flag = true;
             } catch (NumberFormatException | IOException e) {
                 flag = false;
@@ -524,11 +566,13 @@ public class HelperController {
         String enumValue = null;
         while (!flag) {
             try {
-                enumValue = reader.readLine().toUpperCase();
+                enumValue = getServer().dataFromClient().toUpperCase().trim();
                 Enum.valueOf(className, enumValue);
                 flag = true;
-            } catch (IllegalArgumentException | IOException e) {
+            } catch (IllegalArgumentException e) {
                 flag = false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -545,13 +589,15 @@ public class HelperController {
         boolean flag = false;
         while (!flag)
             try {
-                String cmd = reader.readLine();
+                String cmd = getServer().dataFromClient().trim();
                 if (cmd != null) {
                     y = Float.parseFloat(cmd);
                     flag = true;
                 }
-            } catch (NumberFormatException | IOException e) {
+            } catch (NumberFormatException e) {
                 flag = false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         return y;
     }
@@ -630,7 +676,13 @@ public class HelperController {
         System.out.println("\n");
     }
 
+    public Server getServer() {
+        return server;
+    }
 
+    public void setServer(Server server) {
+        this.server = server;
+    }
 
     Comparator<LabWork> compareByName = new Comparator<LabWork>() {
         @Override
@@ -666,6 +718,13 @@ public class HelperController {
     Comparator<LabWork> compareByTunedInWorks = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
+            if (o2.getTunedInWorks() == null && o1.getTunedInWorks() == null)
+                return 0;
+            else if (o2.getTunedInWorks() == null && o1.getTunedInWorks() != null)
+                return 1;
+            else if (o2.getTunedInWorks() != null && o1.getTunedInWorks() == null) {
+                return -1;
+            }
             return o1.getTunedInWorks() - o2.getTunedInWorks();
         }
     };
@@ -673,6 +732,13 @@ public class HelperController {
     Comparator<LabWork> compareByTunedInWorksReverse = new Comparator<LabWork>() {
         @Override
         public int compare(LabWork o1, LabWork o2) {
+            if (o1.getTunedInWorks() == null && o2.getTunedInWorks() == null)
+                return 0;
+            else if (o1.getTunedInWorks() == null && o2.getTunedInWorks() != null)
+                return 1;
+            else if (o1.getTunedInWorks() != null && o2.getTunedInWorks() == null) {
+                return -1;
+            }
             return o2.getTunedInWorks() - o1.getTunedInWorks();
         }
     };

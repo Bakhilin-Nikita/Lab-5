@@ -28,7 +28,7 @@ public class NoInputCommands {
 
         this.helperController = helperController;
 
-        Command getHelp = new GetHelpCommand(new Information());
+        Command getHelp = new GetHelpCommand(helperController);
         Help help = new Help(getHelp);
 
         Command getInfo = new GetInfoCommand(helperController);

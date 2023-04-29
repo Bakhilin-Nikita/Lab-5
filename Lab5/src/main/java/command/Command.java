@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /**
- * Интерфейс для обеспечения полиморфизма команд без параметров.
+ * нтерфейс для обеспечения полиморфизма команд без параметров.
  */
 
 public interface Command {

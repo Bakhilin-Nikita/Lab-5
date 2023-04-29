@@ -1,8 +1,10 @@
 package manager;
 
-import command.commands.*;
-import command.commands.noInputCommands.help.*;
-import command.inputCmdCollection.*;
+import command.commands.ExecuteScript;
+import command.commands.Invoker;
+import command.commands.noInputCommands.help.GetHelpCommand;
+import command.commands.noInputCommands.help.Information;
+import command.inputCmdCollection.InputCommands;
 import command.noInputCmdCollection.NoInputCommands;
 import exceptions.NotJsonFile;
 import object.LabWork;
@@ -10,11 +12,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import parser.Root;
 import parser.parserFromJson.ParserFromJson;
-import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @see Controller нужен для вызова команд. Из него уже происходит вся работа программы.
@@ -27,13 +34,13 @@ public class Controller {
     private Map<String, Invoker> inputCommands = new HashMap<>(); // Map для команд С входными данными, не может быть null
     private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов, не может быть null
     private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию. Не может быть null
-    private GetHelpCommand help = new GetHelpCommand(new Information()); // Не может быть null
+    private GetHelpCommand help = new GetHelpCommand(new HelperController()); // Не может быть null
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));  // Не может быть null
     private HelperController helperController; // Не может быть null
     private Root root; // Не может быть null
     private ExecuteScript executeScript; // Не может быть null
 
-    DatagramSocket socket = new DatagramSocket(1057);
+    private Server server = new Server();
 
     /**
      * В конструкторе происходит автоматическая проверка json-файла.
@@ -53,7 +60,7 @@ public class Controller {
             root.setValid(true);
         }
 
-        this.helperController = new HelperController(this.file, getRoot());
+        this.helperController = new HelperController(this.file, getRoot(), getServer());
     }
 
     /**
@@ -61,22 +68,22 @@ public class Controller {
      * Сперва в методе запускается статический метод help.execute
      * Переменная flag нужна чтобы контролировать цикл while
      * Проверяется наличие execute_script на вводе
+     *
      * @throws IOException
      */
     public void start() throws IOException, ParseException {
         if (getRoot().getValid()) {
             setExecuteScript(new ExecuteScript(getHelperController()));
             boolean flag = false;
-            help.execute();
             while (!flag) {
-                DatagramPacket packet = new DatagramPacket(new byte[1000], 1000);
-                socket.receive(packet);
-                String data = new String(packet.getData()).trim();
-                System.out.println(data);
-                String cmd = reformatCmd(data).trim();
+                String cmd = reformatCmd(getHelperController().getServer().dataFromClient());
                 String[] arr = cmd.split(" ", 2);
                 if (arr[0].equals("execute_script")) {
                     getExecuteScript().execute(arr[1]);
+                } else if (arr[0].equals("exit")){
+                    // close socket connection
+                    getServer().getServerSocket().close();
+                    System.exit(0);
                 }
                 searchCommandInCollection(cmd);
 
@@ -85,6 +92,8 @@ public class Controller {
             }
         }
     }
+
+
 
 
     /**
@@ -136,6 +145,7 @@ public class Controller {
 
     /**
      * Метод форматирует введенные данные, и преобразовывает в нужную форму.
+     *
      * @param cmd
      * @return
      */
@@ -173,8 +183,7 @@ public class Controller {
 
     public void getExtensionByApacheCommonLib(String filename) {
         try {
-            if (!FilenameUtils.getExtension(filename).equals("json"))
-            {
+            if (!FilenameUtils.getExtension(filename).equals("json")) {
                 throw new NotJsonFile("Файл должен быть с расширением json");
             }
         } catch (NotJsonFile e) {
@@ -219,7 +228,13 @@ public class Controller {
         this.executeScript = executeScript;
     }
 
+    public Server getServer() {
+        return server;
+    }
 
+    public void setServer(Server server) {
+        this.server = server;
+    }
 
     @Override
     public String toString() {

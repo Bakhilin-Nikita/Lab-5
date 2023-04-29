@@ -3,6 +3,8 @@ package command.commands.noInputCommands;
 import command.Command;
 import manager.HelperController;
 
+import java.io.IOException;
+
 public class GetInfoCommand implements Command {
     private HelperController helperController;
 
@@ -12,6 +14,10 @@ public class GetInfoCommand implements Command {
 
     @Override
     public void execute() {
-        this.helperController.getInfo();
+        try {
+            this.helperController.getInfo();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
