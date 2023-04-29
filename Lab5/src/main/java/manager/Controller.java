@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @see Controller нужен для вызова команд. Из него уже происходит вся работа программы.
+ * @see Controller нужен для вызова команд. Ыз него уже происходит вся работа программы.
  * Ключевой класс программы.
  */
 
@@ -82,6 +82,8 @@ public class Controller {
                     getExecuteScript().execute(arr[1]);
                 } else if (arr[0].equals("exit")){
                     // close socket connection
+                    getHelperController().save();
+                    getServer().sentToClient("Работа сервера остановлена.");
                     getServer().getServerSocket().close();
                     System.exit(0);
                 }
@@ -112,13 +114,14 @@ public class Controller {
         InputCommands inputCommands = new InputCommands(helperController);
         setInputCommands(inputCommands.getInputCommands());
 
-
+        boolean flag = true;
         //  No input commands
         for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
             String key = entry.getKey();
             if (cmd.equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
                 entry.getValue().doCommand(cmd);
+                flag = false;
             }
         }
 
@@ -139,7 +142,11 @@ public class Controller {
             if (commandKey.equals(key)) {
                 System.out.println("Активирована команда " + entry.getValue().getClass().getSimpleName());
                 entry.getValue().doCommand(commandValue);
+                flag = false;
             }
+        }
+        if (flag == true){
+            getServer().sentToClient("Невалидный ввод данных, повторите попытку.");
         }
     }
 

@@ -44,7 +44,7 @@ public class User {
     }
 
     public static void main(String[] args) throws IOException {
-        User sender = new User("localhost", 59011);
+        User sender = new User("localhost", 59005);
         sender.setSocket(new DatagramSocket());
         BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
         boolean flag = false;
