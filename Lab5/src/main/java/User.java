@@ -1,13 +1,9 @@
-import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class User {
     private String host;
@@ -26,13 +22,13 @@ public class User {
         this.port = port;
     }
 
-    private void SendMessage(String message){
+    private void SendMessage(String message) {
         try {
             receivingDataBuffer = new byte[2048];
             byte[] data = message.getBytes();
             InetAddress address = InetAddress.getByName(host);
             // Создайте UDP-пакет
-            sendingPacket = new DatagramPacket(data, data.length,address,port);
+            sendingPacket = new DatagramPacket(data, data.length, address, port);
             // Отправьте UDP-пакет серверу
             socket.send(sendingPacket);
             // Создайте UDP-пакет
@@ -48,15 +44,19 @@ public class User {
     }
 
     public static void main(String[] args) throws IOException {
-        User sender = new User("localhost",59011);
+        User sender = new User("localhost", 59011);
         sender.setSocket(new DatagramSocket());
         BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
         boolean flag = false;
         while (!flag) {
             System.out.println("Enter: ");
-            String message = b.readLine();
-            if (message.equals("exit")){System.exit(0);}
-            sender.SendMessage(message);
+            String message = b.readLine().trim();
+            if (!message.isEmpty()) {
+                if (message.equals("exit")) {
+                    System.exit(0);
+                }
+                sender.SendMessage(message);
+            }
         }
         b.close();
         // Закрыть соединение

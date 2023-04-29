@@ -546,9 +546,7 @@ public class HelperController {
         boolean flag = false;
         while (!flag)
             try {
-                getServer().sentToClient("Waiting...");
                 y = Integer.parseInt(getServer().dataFromClient());
-                getServer().sentToClient("Int value: " + y);
                 flag = true;
             } catch (NumberFormatException | IOException e) {
                 flag = false;
