@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6846f43c-088a-4fda-823c-2f24cc40a42c" name="Changes" comment="Добавил проверку на уникальность id при выгрузке в коллекцию. Аргументом командной строки передается имя файла. Не работает с невалидным json. Проверяет расширение файла.">
+      <change afterPath="$PROJECT_DIR$/src/main/java/manager/SerializationManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/fileHashes.bin" afterDir="false" />
@@ -12,7 +13,25 @@
       <change beforePath="$PROJECT_DIR$/.gradle/7.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/buildOutputCleanup.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/executionHistory.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/executionHistory.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/file-system.probe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/fileHashes.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/fileHashes.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/previous-compilation-data.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/resourceHashesCache.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_09_04_2023_14_39__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/Command.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/Command.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/commands/ExecuteScript.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/commands/ExecuteScript.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/AddNewElementCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/AddNewElementCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/RemoveById.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/RemoveById.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/RemoveGreaterElementCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/commands/inputCommands/RemoveGreaterElementCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/command/commands/noInputCommands/ShowTheCollectionCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/command/commands/noInputCommands/ShowTheCollectionCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/Controller.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$3.class" afterDir="false" />
@@ -23,13 +42,28 @@
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$8.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController$9.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/manager/HelperController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/object/Coordinates.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/object/Coordinates.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/object/LabWork.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/object/LabWork.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/object/Person.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/object/Person.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/object/enums/Color.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/object/enums/Color.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/object/enums/Difficulty.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/object/enums/Difficulty.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/parser/parserFromJson/ParserFromJson.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/parser/parserFromJson/ParserFromJson.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/distributions/Lab5-1.0-SNAPSHOT.tar" beforeDir="false" afterPath="$PROJECT_DIR$/build/distributions/Lab5-1.0-SNAPSHOT.tar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/distributions/Lab5-1.0-SNAPSHOT.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/distributions/Lab5-1.0-SNAPSHOT.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/libs/Lab5-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/libs/Lab5-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/command/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/command/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/AddNewElementCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/AddNewElementCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/RemoveById.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/RemoveById.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/RemoveGreaterElementCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/command/commands/inputCommands/RemoveGreaterElementCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/command/commands/noInputCommands/ShowTheCollectionCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/command/commands/noInputCommands/ShowTheCollectionCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/manager/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/manager/Controller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/manager/HelperController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/manager/HelperController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/parser/parserFromJson/ParserFromJson.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/parser/parserFromJson/ParserFromJson.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/manager/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/manager/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/object/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/object/Coordinates.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/object/LabWork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/object/LabWork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/object/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/object/Person.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +123,11 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="manager" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Lab5-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/build/libs/Lab5-1.0-SNAPSHOT.jar" />
@@ -132,6 +171,7 @@
       <workItem from="1681072416240" duration="6703000" />
       <workItem from="1681118839499" duration="11420000" />
       <workItem from="1681282978493" duration="21674000" />
+      <workItem from="1682962008147" duration="6422000" />
     </task>
     <task id="LOCAL-00004" summary="Добавил проверку на уникальность id при выгрузке в коллекцию. Аргументом командной строки передается имя файла. Не работает с невалидным json. Проверяет расширение файла.">
       <created>1681134813207</created>

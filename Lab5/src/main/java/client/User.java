@@ -1,0 +1,153 @@
+package client;
+
+import object.LabWork;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StreamCorruptedException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.PortUnreachableException;
+import java.util.HashSet;
+
+public class User {
+
+    private SendObject sendObject;
+    private String host;
+    private int port;
+
+    private static DatagramSocket socket;
+
+    private DatagramPacket sendingPacket;
+
+    private DatagramPacket receivingPacket;
+
+    private byte[] receivingDataBuffer;
+
+    public User(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    private void SendMessage(String message) throws ClassNotFoundException, IOException, InterruptedException {
+        InetAddress address = InetAddress.getByName(this.host);
+        socket.connect(address, port);
+        receivingDataBuffer = new byte[2048];
+        byte[] data = message.trim().getBytes();
+        // Создайте UDP-пакет
+        sendingPacket = new DatagramPacket(data, data.length, address, port);
+        // Отправьте UDP-пакет серверу
+        socket.send(sendingPacket);
+        // Создайте UDP-пакет
+        receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+        //Получите ответ от сервера
+        try {
+            socket.receive(receivingPacket);
+        } catch (PortUnreachableException e) {
+            System.out.println("Server do not respond(");
+            socket.close();
+        }
+
+        if (message.equals("show")) {
+            try {
+                System.out.println(SerializationManager.deserialize(receivingPacket.getData()).toString().trim());
+            } catch (StreamCorruptedException e) {
+                System.out.println("Коллекция пустая!");
+            }
+        } else {
+            String receivedData = new String(receivingPacket.getData());
+            System.out.println(receivedData.trim());
+        }
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        User sender = new User("localhost", 50025);
+        sender.setSocket(new DatagramSocket());
+        BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+        boolean flag = false;
+
+        sender.sendObject = new SendObject(sender.getLabs());
+
+        while (!flag) {
+            System.out.println("Enter: ");
+            String message = b.readLine().trim();
+            if (!message.isEmpty()) {
+                if (message.equals("exit")) {
+                    System.exit(0);
+                } else if (message.equals("add")) {
+                    sender.sendLabWorkObject();
+                } else {
+                    try {
+                        System.out.println(socket.isConnected());
+                        sender.SendMessage(message);
+                    } catch (ClassNotFoundException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        b.close();
+        // Закрыть соединение
+        sender.getSocket().close();
+    }
+
+    private void sendLabWorkObject() throws IOException {
+        sendObject.start();
+
+        InetAddress address = InetAddress.getByName(this.host);
+        socket.connect(address, port);
+        receivingDataBuffer = new byte[2048];
+        byte[] data = SerializationManager.serialize(sendObject.getLabWork());
+        // Создайте UDP-пакет
+        sendingPacket = new DatagramPacket(data, data.length, address, port);
+        // Отправьте UDP-пакет серверу
+        socket.send(sendingPacket);
+        // Создайте UDP-пакет
+        receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+        //Получите ответ от сервера
+        try {
+            socket.receive(receivingPacket);
+        } catch (PortUnreachableException e) {
+            System.out.println("Server do not respond(");
+            socket.close();
+        }
+
+        String receivedData = new String(receivingPacket.getData());
+        System.out.println(receivedData.trim());
+
+    }
+
+    public void setSocket(DatagramSocket socket) {
+        this.socket = socket;
+    }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
+    private HashSet<LabWork> getLabs() throws IOException {
+
+        InetAddress address = InetAddress.getByName(this.host);
+        socket.connect(address, port);
+        receivingDataBuffer = new byte[2048];
+        byte[] data = "show".getBytes();
+        // Создайте UDP-пакет
+        sendingPacket = new DatagramPacket(data, data.length, address, port);
+        // Отправьте UDP-пакет серверу
+        socket.send(sendingPacket);
+        // Создайте UDP-пакет
+        receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+        socket.receive(receivingPacket);
+        try {
+            HashSet<LabWork> labs = SerializationManager.deserialize(receivingPacket.getData());
+            return labs;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+
