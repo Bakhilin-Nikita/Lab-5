@@ -1,7 +1,7 @@
 package client.object;
 
 
-import object.enums.Color;
+import client.object.enums.Color;
 
 import java.io.Serializable;
 

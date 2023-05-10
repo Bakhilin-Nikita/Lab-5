@@ -1,6 +1,8 @@
 package client.object;
 
-import object.enums.Difficulty;
+
+
+import client.object.enums.Difficulty;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;

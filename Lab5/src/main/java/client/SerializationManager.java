@@ -1,5 +1,6 @@
 package client;
 
+import client.object.LabWork;
 import object.LabWork;
 
 import java.io.*;

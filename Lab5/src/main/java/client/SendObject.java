@@ -1,17 +1,21 @@
 package client;
 
-import exceptions.InvalidFieldY;
-import object.Coordinates;
-import object.LabWork;
-import object.Person;
-import object.enums.Color;
-import object.enums.Difficulty;
+
+
+import client.exceptions.InvalidFieldY;
+import client.object.Coordinates;
+import client.object.LabWork;
+import client.object.Person;
+import client.object.enums.Color;
+import client.object.enums.Difficulty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.HashMap;
+
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;

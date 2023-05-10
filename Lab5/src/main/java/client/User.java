@@ -1,16 +1,15 @@
 package client;
 
-import object.LabWork;
+
+import client.object.LabWork;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamCorruptedException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.PortUnreachableException;
+import java.net.*;
 import java.util.HashSet;
+
 
 public class User {
 
@@ -39,15 +38,21 @@ public class User {
         // Создайте UDP-пакет
         sendingPacket = new DatagramPacket(data, data.length, address, port);
         // Отправьте UDP-пакет серверу
-        socket.send(sendingPacket);
+        try {
+            socket.send(sendingPacket);
+        } catch (SocketException e) {
+            System.out.println("Server do not respond");
+            System.exit(0);
+        }
         // Создайте UDP-пакет
         receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
         //Получите ответ от сервера
         try {
             socket.receive(receivingPacket);
-        } catch (PortUnreachableException e) {
+        } catch (SocketException e) {
             System.out.println("Server do not respond(");
             socket.close();
+            System.exit(0);
         }
 
         if (message.equals("show")) {
@@ -69,19 +74,18 @@ public class User {
         BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
         boolean flag = false;
 
-        sender.sendObject = new SendObject(sender.getLabs());
-
         while (!flag) {
             System.out.println("Enter: ");
             String message = b.readLine().trim();
+
             if (!message.isEmpty()) {
                 if (message.equals("exit")) {
                     System.exit(0);
                 } else if (message.equals("add")) {
+                    sender.sendObject = new SendObject(sender.getLabs());
                     sender.sendLabWorkObject();
                 } else {
                     try {
-                        System.out.println(socket.isConnected());
                         sender.SendMessage(message);
                     } catch (ClassNotFoundException | InterruptedException e) {
                         throw new RuntimeException(e);
@@ -140,7 +144,11 @@ public class User {
         socket.send(sendingPacket);
         // Создайте UDP-пакет
         receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-        socket.receive(receivingPacket);
+        try {
+            socket.receive(receivingPacket);
+        } catch (PortUnreachableException e) {
+            System.out.println("Server do not respond!");
+        }
         try {
             HashSet<LabWork> labs = SerializationManager.deserialize(receivingPacket.getData());
             return labs;
