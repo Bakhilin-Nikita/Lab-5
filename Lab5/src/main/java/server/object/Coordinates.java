@@ -1,6 +1,8 @@
 package server.object;
 
 
+
+
 import server.exceptions.InvalidFieldY;
 import server.exceptions.NullX;
 

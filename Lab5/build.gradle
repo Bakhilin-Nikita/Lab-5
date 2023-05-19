@@ -21,7 +21,7 @@ jar {
     jar.baseName("Lab5")
     manifest {
         attributes(
-                'Main-Class': 'App'
+                'Main-Class': 'server.App'
         )
     }
 

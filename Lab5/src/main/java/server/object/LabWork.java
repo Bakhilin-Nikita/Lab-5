@@ -1,5 +1,7 @@
 package server.object;
 
+
+
 import server.object.enums.Difficulty;
 
 import java.io.Serializable;
@@ -9,7 +11,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * The object.LabWork is main object for console server.App
+ * The object.LabWork is main object for console App
  */
 
 public class LabWork implements Serializable {

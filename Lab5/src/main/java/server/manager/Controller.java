@@ -75,20 +75,26 @@ public class Controller {
             setExecuteScript(new ExecuteScript(getHelperController()));
             boolean flag = false;
             while (!flag) {
+                System.out.println("The SERVER is RUNNING:");
                 String cmd = reformatCmd(getServer().dataFromClient());
                 String[] arr = cmd.split(" ", 2);
                 if (arr[0].equals("execute_script")) {
                     getExecuteScript().execute(arr[1]);
-                } else if (arr[0].equals("add")) {
-                    getRoot().getLabWorkSet().add(getServer().getObjectFromClient());
+                } else if (arr[0].equals("Add")) {
+                //    System.out.println("ADD activation");
+                    LabWork lab = getServer().getObjectFromClient();
+                    getRoot().getLabWorkSet().add(lab);
+             //       System.out.println("Элемент добавлен в коллекцию!");
                 } else if (arr[0].equals("exit")){
                     // close socket connection
                     getHelperController().save();
                     getServer().sentToClient("Работа сервера остановлена.");
                     getServer().getServerSocket().close();
                     System.exit(0);
+                } else {
+                    searchCommandInCollection(cmd);
                 }
-                searchCommandInCollection(cmd);
+
 
                // getServer().sentToClient("? Если возникли трудности, введите команду help");
             }

@@ -13,6 +13,8 @@ import server.parser.Root;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 
 /**
@@ -120,11 +122,13 @@ public class ParserFromJson {
             idLabs.add((int) lab.getId());
         }
 
+        Collections.sort(idLabs);
+
 
         for (Integer id: idLabs) {
-            System.out.println(id);
             for (int i = id+1; i < idLabs.size(); i++) {
-                System.out.println("id object=" + idLabs.get(i)+ " id=" + id);
+               // System.out.println("id="+id);
+               // System.out.println(ParserFromJson.class.getSimpleName()+" id object=" + idLabs.get(i)+ " id=" + id);
                 try {
                     if (id.equals(idLabs.get(i)))
                         throw new IOException("Файл не прошел валидацию. Мы нашли объекты с одинаковым id.");

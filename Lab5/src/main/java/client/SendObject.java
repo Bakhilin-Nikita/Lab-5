@@ -1,21 +1,18 @@
 package client;
 
-
-
-import client.exceptions.InvalidFieldY;
-import client.object.Coordinates;
-import client.object.LabWork;
-import client.object.Person;
-import client.object.enums.Color;
-import client.object.enums.Difficulty;
+import server.exceptions.InvalidFieldY;
+import server.object.Coordinates;
+import server.object.LabWork;
+import server.object.Person;
+import server.object.enums.Color;
+import server.object.enums.Difficulty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.HashMap;
-
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,12 +21,13 @@ public class SendObject {
 
     private HashSet<LabWork> labs;
 
-    private BufferedReader reader;
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     private LabWork labWork;
 
     public SendObject(HashSet<LabWork> labWorks) {
-        this.labs = labWorks;
+        if (labWorks != null)
+            this.labs = labWorks;
     }
 
     public void setLabWork(LabWork labWork) {
@@ -77,7 +75,7 @@ public class SendObject {
      * @return
      * @throws IOException
      */
-    private Difficulty addDifficulty() throws IOException {
+    private Difficulty addDifficulty() {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
         String difficulty = checkOnEnum(Difficulty.class);
         return Difficulty.valueOf(difficulty);
@@ -90,18 +88,22 @@ public class SendObject {
      */
     public int generateId() {
         Map<Integer, LabWork> labs = new HashMap<>();
-        for (LabWork lab : this.labs)
-            labs.put((int) lab.getId(), lab);
-        labs = sortByKeys(labs);
-        Integer size = labs.size();
-        for (Map.Entry<Integer, LabWork> entry : labs.entrySet()) {
-            if (size.equals(entry.getKey())) {
-                size += 1;
+
+        if (this.labs != null) {
+            for (LabWork lab : this.labs)
+                labs.put((int) lab.getId(), lab);
+            labs = sortByKeys(labs);
+            Integer size = labs.size();
+            for (Map.Entry<Integer, LabWork> entry : labs.entrySet()) {
+                if (size.equals(entry.getKey())) {
+                    size += 1;
+                }
             }
+            return size;
         }
-        if (labs.size() == 0)
-            return 0;
-        return size;
+
+
+        return 0;
     }
 
     /**
@@ -184,7 +186,7 @@ public class SendObject {
             System.out.println("Введите рост автора: ");
             Float h = checkOnFloat();
             if (h.isInfinite())
-                throw new IllegalArgumentException("Некорректный ввод. Повторите попытку.");
+                throw new IllegalArgumentException("Некорректный ввод. Повторите попытку.(height)");
             if (h < 272 && h > 0) {
                 flag = true;
                 height = h;
@@ -206,7 +208,7 @@ public class SendObject {
                 else
                     System.out.println("Ты не мог родиться в такой год. Самый старый человек родился в 1907 году.Мария Браньяс Морера");
             } catch (DateTimeException e) {
-                System.out.println("Невалидный ввод данных, повторите попытку.");
+                System.out.println("Невалидный ввод данных, повторите попытку.(time)");
             }
         }
 
@@ -294,7 +296,7 @@ public class SendObject {
      *
      * @return
      */
-    private String checkOnEnum(Class className) throws IOException {
+    private String checkOnEnum(Class className) {
         boolean flag = false;
         String enumValue = null;
         while (!flag) {
@@ -304,7 +306,7 @@ public class SendObject {
                 flag = true;
             } catch (IllegalArgumentException | IOException e) {
                 flag = false;
-                System.out.println("Невалидный ввод данных, повторите попытку.");
+                System.out.println("Невалидный ввод данных, повторите попытку.(enum)");
             }
         }
 
@@ -328,7 +330,7 @@ public class SendObject {
                 }
             } catch (NumberFormatException | IOException e) {
                 flag = false;
-                System.out.println("Невалидный ввод данных, повторите попытку.");
+                System.out.println("Невалидный ввод данных, повторите попытку.(float)");
             }
         return y;
     }

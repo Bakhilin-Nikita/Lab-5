@@ -1,15 +1,11 @@
 package server.noInputCmdCollection;
 
 import server.Command;
-import command.commands.inputCommands.*;
 import server.manager.HelperController;
-import command.commands.*;
-import command.commands.noInputCommands.*;
 import server.commands.noInputCommands.ShowTheCollectionCommand;
 import server.commands.noInputCommands.help.GetHelpCommand;
 import server.commands.noInputCommands.help.Help;
 import server.commands.Invoker;
-import server.command.commands.inputCommands.*;
 import server.commands.inputCommands.*;
 import server.commands.noInputCommands.*;
 

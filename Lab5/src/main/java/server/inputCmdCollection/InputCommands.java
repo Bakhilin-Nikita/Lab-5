@@ -2,8 +2,6 @@ package server.inputCmdCollection;
 
 import server.UpdateCommand;
 import server.manager.HelperController;
-import command.commands.*;
-import command.commands.inputCommands.*;
 import server.commands.ExecuteScript;
 import server.commands.Invoker;
 import server.commands.inputCommands.RemoveById;

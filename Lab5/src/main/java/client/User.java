@@ -1,7 +1,6 @@
 package client;
 
-
-import client.object.LabWork;
+import server.object.LabWork;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.StreamCorruptedException;
 import java.net.*;
 import java.util.HashSet;
-
 
 public class User {
 
@@ -75,7 +73,7 @@ public class User {
         boolean flag = false;
 
         while (!flag) {
-            System.out.println("Enter: ");
+            System.out.println("Enter command: ");
             String message = b.readLine().trim();
 
             if (!message.isEmpty()) {
@@ -84,6 +82,8 @@ public class User {
                 } else if (message.equals("add")) {
                     sender.sendObject = new SendObject(sender.getLabs());
                     sender.sendLabWorkObject();
+                } else if (message.equals("save")) {
+                    System.out.println("Command save is not available!");
                 } else {
                     try {
                         sender.SendMessage(message);
@@ -109,27 +109,6 @@ public class User {
         sendingPacket = new DatagramPacket(data, data.length, address, port);
         // Отправьте UDP-пакет серверу
         socket.send(sendingPacket);
-        // Создайте UDP-пакет
-        receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-        //Получите ответ от сервера
-        try {
-            socket.receive(receivingPacket);
-        } catch (PortUnreachableException e) {
-            System.out.println("Server do not respond(");
-            socket.close();
-        }
-
-        String receivedData = new String(receivingPacket.getData());
-        System.out.println(receivedData.trim());
-
-    }
-
-    public void setSocket(DatagramSocket socket) {
-        this.socket = socket;
-    }
-
-    public DatagramSocket getSocket() {
-        return socket;
     }
 
     private HashSet<LabWork> getLabs() throws IOException {
@@ -146,16 +125,30 @@ public class User {
         receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
         try {
             socket.receive(receivingPacket);
+            data = "add".getBytes();
+            sendingPacket = new DatagramPacket(data, data.length, address, port);
+            socket.send(sendingPacket);
         } catch (PortUnreachableException e) {
             System.out.println("Server do not respond!");
         }
         try {
+            if (SerializationManager.deserialize(receivingPacket.getData()) == null)
+                return null;
             HashSet<LabWork> labs = SerializationManager.deserialize(receivingPacket.getData());
             return labs;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
+
+    public void setSocket(DatagramSocket socket) {
+        this.socket = socket;
+    }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
 }
 
 

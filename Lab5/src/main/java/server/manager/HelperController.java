@@ -1,11 +1,11 @@
 package server.manager;
 
-import server.exceptions.InvalidFieldY;
 import server.object.Coordinates;
 import server.object.LabWork;
 import server.object.Person;
 import server.object.enums.Color;
 import server.object.enums.Difficulty;
+import server.exceptions.InvalidFieldY;
 import server.parser.Root;
 import server.parser.parserFromJson.ParserFromJson;
 import server.parser.parserToJson.ParserToJson;
@@ -79,6 +79,9 @@ public class HelperController {
      */
     public void update(int id) throws IOException, ParseException {
         boolean flag = true;
+
+
+
         for (LabWork lab : getRoot().getLabWorkSet()) {
             if (lab.getId() == id) {
                 LabWork e = adder();
@@ -134,16 +137,16 @@ public class HelperController {
 
         if (labWorkList.isEmpty()) {
             try {
-                getServer().sentToClient("Коллекция пустая");
+                getServer().sentToClient("Collection is empty!");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
             try {
-//                for (LabWork lab: labWorkList){
-//                    h.add(lab.toString());
-//                }
-
+/*                for (LabWork lab: labWorkList){
+                    h.add(lab.toString());
+               }
+*/
                 getServer().sentToClient(SerializationManager.serialize(labWorkList));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -481,7 +484,7 @@ public class HelperController {
             getServer().sentToClient("Введите рост автора: ");
             Float h = checkOnFloat();
             if (h.isInfinite())
-                throw new IllegalArgumentException("Некорректный ввод. Повторите попытку.");
+                throw new IllegalArgumentException("некорректный ввод. Повторите попытку.");
             if ( h < 272 && h > 0 ) {
                 flag = true;
                 height = h;

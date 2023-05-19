@@ -22,7 +22,7 @@ public class Server {
     public void sentToClient(String data) throws IOException {
         byte[] sendingDataBuffer;
 
-        //  sent client result
+        //  sent to client result
         sendingDataBuffer = data.getBytes();
 
 
@@ -57,7 +57,7 @@ public class Server {
     public String dataFromClient() throws IOException {
 
         boolean flag = false;
-        System.out.println("waiting for a client to connect: ");
+      //  System.out.println("waiting for a client to connect: ");
         while (!flag) {
             byte[] receivingDataBuffer = new byte[1024];
             DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
@@ -81,8 +81,7 @@ public class Server {
     }
 
     public LabWork getObjectFromClient() throws IOException, ClassNotFoundException {
-        boolean flag = false;
-        System.out.println("waiting for a client to connect: ");
+      //  System.out.println("waiting for a client to get OBJECT LABWORK: ");
             byte[] receivingDataBuffer = new byte[1024];
             DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
             // give information from client
@@ -93,7 +92,7 @@ public class Server {
             setSenderPort(inputPacket.getPort());
 
 
-            return  (LabWork) SerializationManager.deserializeObject(inputPacket.getData());
+            return  SerializationManager.deserializeObject(inputPacket.getData());
 
     }
 
