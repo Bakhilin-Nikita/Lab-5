@@ -134,23 +134,14 @@ public class HelperController {
         HashSet<LabWork> labWorkList = new HashSet<>();
         //List<String> h = new ArrayList<>();  Для истории оставим здесь, кусок кода который спас нас от допсы, автор Бабенко Даниил
         labWorkList.addAll(getRoot().getLabWorkSet());
-
-        if (labWorkList.isEmpty()) {
-            try {
-                getServer().sentToClient("Collection is empty!");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            try {
+        try {
 /*                for (LabWork lab: labWorkList){
                     h.add(lab.toString());
                }
 */
-                getServer().sentToClient(SerializationManager.serialize(labWorkList));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            getServer().sentToClient(SerializationManager.serialize(labWorkList));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }

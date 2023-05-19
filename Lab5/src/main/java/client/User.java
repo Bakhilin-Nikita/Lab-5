@@ -54,11 +54,10 @@ public class User {
         }
 
         if (message.equals("show")) {
-            try {
-                System.out.println(SerializationManager.deserialize(receivingPacket.getData()).toString().trim());
-            } catch (StreamCorruptedException e) {
+            if (SerializationManager.deserialize(receivingPacket.getData()).toString().trim().equals("[]"))
                 System.out.println("Коллекция пустая!");
-            }
+            else
+                System.out.println(SerializationManager.deserialize(receivingPacket.getData()).toString().trim());
         } else {
             String receivedData = new String(receivingPacket.getData());
             System.out.println(receivedData.trim());
