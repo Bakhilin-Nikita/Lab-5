@@ -21,13 +21,10 @@ public class SendObject {
 
     private HashSet<LabWork> labs;
 
-    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
     private LabWork labWork;
 
     public SendObject(HashSet<LabWork> labWorks) {
-        if (labWorks != null)
-            this.labs = labWorks;
+        this.labs = labWorks;
     }
 
     public void setLabWork(LabWork labWork) {
@@ -38,20 +35,20 @@ public class SendObject {
         return labWork;
     }
 
-    public void start() {
+    public void start(BufferedReader b) {
         try {
-            this.labWork = adder();
+            this.labWork = adder(b);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private LabWork adder() throws IOException {
+    LabWork adder(BufferedReader b) throws IOException {
         System.out.println("Введите название Лабораторной работы: ");
         String name = null;
         while (name == null) {
             try {
-                name = reader.readLine().trim();
+                name = b.readLine().trim();
                 if (name == null || name.isEmpty()) {
                     throw new RuntimeException("Пустая строка не может именем лабораторной работы. Попробуй ещё раз.");
                 }
@@ -60,11 +57,11 @@ public class SendObject {
                 name = null;
             }
         }
-        Coordinates coordinates = addCoordinates();
-        Person author = addPerson();
-        int minimalPoint = addMinimalPoint();
-        Long tunedInWorks = addTunedInWorks();
-        Difficulty difficulty = addDifficulty();
+        Coordinates coordinates = addCoordinates(b);
+        Person author = addPerson(b);
+        int minimalPoint = addMinimalPoint(b);
+        Long tunedInWorks = addTunedInWorks(b);
+        Difficulty difficulty = addDifficulty(b);
         LabWork e = new LabWork(generateId(), name, minimalPoint, tunedInWorks, difficulty, coordinates, author);
         return e;
     }
@@ -75,9 +72,9 @@ public class SendObject {
      * @return
      * @throws IOException
      */
-    private Difficulty addDifficulty() {
+    private Difficulty addDifficulty(BufferedReader b) {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
-        String difficulty = checkOnEnum(Difficulty.class);
+        String difficulty = checkOnEnum(Difficulty.class,b);
         return Difficulty.valueOf(difficulty);
     }
 
@@ -124,11 +121,11 @@ public class SendObject {
      *
      * @return
      */
-    private Long addTunedInWorks() throws IOException {
+    private Long addTunedInWorks(BufferedReader b) throws IOException {
         Long tunedInWorks = null;
         boolean flag = false;
         System.out.println("Введите tunedInWorks(1-1000):");
-        String commandValue = reader.readLine().trim();
+        String commandValue = b.readLine().trim();
         if (!commandValue.trim().isEmpty())
             while (!flag) {
                 try {
@@ -138,7 +135,7 @@ public class SendObject {
                         tunedInWorks = Long.parseLong(num);
                     } else {
                         System.out.println("Введите tunedInWorks(1-1000):");
-                        tunedInWorks = checkOnLong();
+                        tunedInWorks = checkOnLong(b);
                     }
                     if (tunedInWorks > 0 && tunedInWorks < 1001) {
                         flag = true;
@@ -153,12 +150,12 @@ public class SendObject {
         return tunedInWorks;
     }
 
-    private int addMinimalPoint() throws IOException {
+    private int addMinimalPoint(BufferedReader b) throws IOException {
         int minimalPoint = 0;
         boolean flag = false;
         while (!flag) {
             System.out.println("Введите minimalPoint(1-1000):");
-            minimalPoint = checkOnInt();
+            minimalPoint = checkOnInt(b);
             if (minimalPoint > 0 && minimalPoint < 1001)
                 flag = true;
             else
@@ -168,12 +165,12 @@ public class SendObject {
         return minimalPoint;
     }
 
-    private Person addPerson() throws IOException {
+    private Person addPerson(BufferedReader b) throws IOException {
         boolean flag = false;
         String name = null;
         while (!flag) {
             System.out.println("Введите имя автора: ");
-            name = reader.readLine().trim();
+            name = b.readLine().trim();
             if (!name.isEmpty())
                 flag = true;
             else
@@ -184,7 +181,7 @@ public class SendObject {
         float height = 0;
         while (!flag) {
             System.out.println("Введите рост автора: ");
-            Float h = checkOnFloat();
+            Float h = checkOnFloat(b);
             if (h.isInfinite())
                 throw new IllegalArgumentException("Некорректный ввод. Повторите попытку.(height)");
             if (h < 272 && h > 0) {
@@ -201,7 +198,7 @@ public class SendObject {
         while (date == null) {
             try {
                 System.out.println("Введите дату рождения автора (гггг-мм-дд): ");
-                birthday = LocalDate.parse(reader.readLine().trim());
+                birthday = LocalDate.parse(b.readLine().trim());
                 String[] dateSplit = birthday.toString().split("-");
                 if (Integer.parseInt(dateSplit[0]) >= 1907 && Integer.parseInt(dateSplit[0]) < 2015)
                     date = dateSplit[2] + "-" + dateSplit[1] + "-" + dateSplit[0];
@@ -214,20 +211,20 @@ public class SendObject {
 
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
 
-        String color = checkOnEnum(Color.class);
+        String color = checkOnEnum(Color.class,b);
 
         return new Person(name, Color.valueOf(color), height, date);
     }
 
-    private Coordinates addCoordinates() throws IOException {
+    private Coordinates addCoordinates(BufferedReader b) throws IOException {
         boolean flag = false;
         System.out.println("Введите координату x: ");
-        int x = checkOnInt();
+        int x = checkOnInt(b);
         double y = 0;
         while (!flag) {
             try {
                 System.out.println("Введите координату y: ");
-                y = checkOnDouble();
+                y = checkOnDouble(b);
 
                 if (y < -184) {
                     throw new InvalidFieldY("Field Y must be > -184 and can not be NULL");
@@ -241,12 +238,12 @@ public class SendObject {
         return new Coordinates(x, y);
     }
 
-    private double checkOnDouble() throws IOException {
+    private double checkOnDouble(BufferedReader b) throws IOException {
         double y = 0;
         boolean flag = false;
         while (!flag) {
             try {
-                y = Double.parseDouble(reader.readLine().trim());
+                y = Double.parseDouble(b.readLine().trim());
                 flag = true;
             } catch (NumberFormatException | IOException e) {
                 flag = false;
@@ -257,12 +254,12 @@ public class SendObject {
         return y;
     }
 
-    private Long checkOnLong() throws IOException {
+    private Long checkOnLong(BufferedReader b) throws IOException {
         long y = 0;
         boolean flag = false;
         while (!flag)
             try {
-                y = Long.parseLong(reader.readLine().trim());
+                y = Long.parseLong(b.readLine().trim());
                 flag = true;
             } catch (NumberFormatException e) {
                 flag = false;
@@ -277,12 +274,12 @@ public class SendObject {
      *
      * @return
      */
-    private int checkOnInt() throws IOException {
+    private int checkOnInt(BufferedReader b) throws IOException {
         int y = 0;
         boolean flag = false;
         while (!flag)
             try {
-                y = Integer.parseInt(reader.readLine().trim());
+                y = Integer.parseInt(b.readLine().trim());
                 flag = true;
             } catch (NumberFormatException | IOException e) {
                 flag = false;
@@ -296,12 +293,12 @@ public class SendObject {
      *
      * @return
      */
-    private String checkOnEnum(Class className) {
+    private String checkOnEnum(Class className, BufferedReader b) {
         boolean flag = false;
         String enumValue = null;
         while (!flag) {
             try {
-                enumValue = reader.readLine().toUpperCase().trim();
+                enumValue = b.readLine().toUpperCase().trim();
                 Enum.valueOf(className, enumValue);
                 flag = true;
             } catch (IllegalArgumentException | IOException e) {
@@ -318,12 +315,12 @@ public class SendObject {
      *
      * @return
      */
-    private float checkOnFloat() throws IOException {
+    private float checkOnFloat(BufferedReader b) throws IOException {
         float y = 0;
         boolean flag = false;
         while (!flag)
             try {
-                String cmd = reader.readLine().trim();
+                String cmd = b.readLine().trim();
                 if (cmd != null) {
                     y = Float.parseFloat(cmd);
                     flag = true;
