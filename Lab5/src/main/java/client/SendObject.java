@@ -1,15 +1,14 @@
 package client;
 
-import server.exceptions.InvalidFieldY;
-import server.object.Coordinates;
-import server.object.LabWork;
-import server.object.Person;
-import server.object.enums.Color;
-import server.object.enums.Difficulty;
+import server7.exceptions.InvalidFieldY;
+import server7.object.Coordinates;
+import server7.object.LabWork;
+import server7.object.Person;
+import server7.object.enums.Color;
+import server7.object.enums.Difficulty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -74,7 +73,7 @@ public class SendObject {
      */
     private Difficulty addDifficulty(BufferedReader b) {
         System.out.println("Введите сложность работы (VERY_EASY, EASY, VERY_HARD, IMPOSSIBLE, HOPELESS:");
-        String difficulty = checkOnEnum(Difficulty.class,b);
+        String difficulty = checkOnEnum(Difficulty.class, b);
         return Difficulty.valueOf(difficulty);
     }
 
@@ -211,7 +210,7 @@ public class SendObject {
 
         System.out.println("Введите цвет глаз автора (GREEN, RED, ORANGE, WHITE, BLACK): ");
 
-        String color = checkOnEnum(Color.class,b);
+        String color = checkOnEnum(Color.class, b);
 
         return new Person(name, Color.valueOf(color), height, date);
     }

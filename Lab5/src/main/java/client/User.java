@@ -1,13 +1,14 @@
 package client;
 
-import server.object.LabWork;
+
+
+import server7.object.LabWork;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class User {
 
@@ -78,7 +79,7 @@ public class User {
         while (!flag) {
             System.out.println("Enter command: ");
             String message = b.readLine().trim();
-            String[] arr = message.split(" ",2);
+            String[] arr = message.split(" ", 2);
 
             if (!message.isEmpty()) {
                 if (message.equals("exit")) {
@@ -161,7 +162,7 @@ public class User {
                     flag = false;
                 }
 
-                if (flag == false){
+                if (flag == false) {
                     break;
                 }
 
@@ -172,8 +173,7 @@ public class User {
                     String[] ex = command.split(" ", 2);
                     if (ex[0].equals("execute_script")) {
                         executeScript(ex[1]);
-                    }
-                    else if (command.equals("add")){
+                    } else if (command.equals("add")) {
                         sendObject = new SendObject(getLabs());
                         sendLabWorkObject(buff);
                     } else {

@@ -1,6 +1,6 @@
 package client;
 
-import server.object.LabWork;
+import server7.object.LabWork;
 import java.io.*;
 import java.util.HashSet;
 
