@@ -8,6 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 public class Server {
 
@@ -72,27 +74,43 @@ public class Server {
     }
 
     public String dataFromClient() throws IOException {
-        boolean flag = false;
-        while (!flag) {
-            byte[] receivingDataBuffer = new byte[1024];
-            DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-            // give information from client
-            serverSocket.receive(inputPacket);
+//        // fork join pool
 
-            String receivedData = new String(inputPacket.getData()).trim();
+        class GetDataViaForkJoinPool extends RecursiveTask<String> {
+            @Override
+            protected String compute() {
+                boolean flag = false;
+                while (!flag) {
+                    byte[] receivingDataBuffer = new byte[1024];
+                    DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+                    // give information from client
+                    try {
+                        serverSocket.receive(inputPacket);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
-            if (!receivedData.isEmpty()) {
+                    String receivedData = new String(inputPacket.getData()).trim();
 
-                setSenderAddress(inputPacket.getAddress());
-                setSenderPort(inputPacket.getPort());
+                    if (!receivedData.isEmpty()) {
+
+                        setSenderAddress(inputPacket.getAddress());
+                        setSenderPort(inputPacket.getPort());
 
 
-                System.out.println("Sent from client: " + receivedData);
-                return receivedData;
+                        System.out.println("Sent from client: " + receivedData);
+                        return receivedData;
+                    }
+                }
+                return "";
             }
         }
 
-        return "";
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        GetDataViaForkJoinPool getDataViaForkJoinPool = new GetDataViaForkJoinPool();
+
+        return forkJoinPool.invoke(getDataViaForkJoinPool);
+
     }
 
     public LabWork getObjectFromClient() throws IOException, ClassNotFoundException {

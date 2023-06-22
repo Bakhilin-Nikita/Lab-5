@@ -147,25 +147,22 @@ public class Controller {
                 System.out.println("The SERVER is RUNNING:");
                 String cmd = reformatCmd(getServer().dataFromClient());
 
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String[] arr = cmd.split(" ", 2);
-                            if (arr[0].equals("execute_script")) {
-                                getExecuteScript().execute(arr[1]);
-                            } else if (arr[0].equals("Exit")) {
-                                // close socket connection
-                                getHelperController().save();
-                                getServer().sentToClient("Работа сервера остановлена.");
-                                getServer().getServerSocket().close();
-                                System.exit(0);
-                            } else {
-                                searchCommandInCollection(cmd);
-                            }
-                        } catch (IOException | ParseException e) {
-                            throw new RuntimeException();
+                Runnable r = () -> {
+                    try {
+                        String[] arr = cmd.split(" ", 2);
+                        if (arr[0].equals("execute_script")) {
+                            getExecuteScript().execute(arr[1]);
+                        } else if (arr[0].equals("Exit")) {
+                            // close socket connection
+                            getHelperController().save();
+                            getServer().sentToClient("Работа сервера остановлена.");
+                            getServer().getServerSocket().close();
+                            System.exit(0);
+                        } else {
+                            searchCommandInCollection(cmd);
                         }
+                    } catch (IOException | ParseException e) {
+                        throw new RuntimeException();
                     }
                 };
 
