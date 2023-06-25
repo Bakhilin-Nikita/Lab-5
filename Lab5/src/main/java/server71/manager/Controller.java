@@ -1,27 +1,26 @@
-package server7.manager;
+package server71.manager;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.text.WordUtils;
-import server7.CurrentUser;
-import server7.commands.ExecuteScript;
-import server7.commands.Invoker;
-import server7.commands.noInputCommands.help.GetHelpCommand;
-import server7.databaseManager.ConnectionManager;
-import server7.databaseManager.LabWorksDatabaseManager;
-import server7.databaseManager.Login;
-import server7.exceptions.NotJsonFile;
-import server7.inputCmdCollection.InputCommands;
-import server7.noInputCmdCollection.NoInputCommands;
-import server7.object.LabWork;
-import server7.parser.Root;
-import server7.parser.parserFromJson.ParserFromJson;
+import server.CurrentUser;
+import server.commands.ExecuteScript;
+import server.commands.Invoker;
+import server.commands.noInputCommands.help.GetHelpCommand;
+import server.databaseManager.ConnectionManager;
+import server.databaseManager.LabWorksDatabaseManager;
+import server.exceptions.NotJsonFile;
+import server.inputCmdCollection.InputCommands;
+import server.manager.HelperController;
+import server.manager.Server;
+import server.noInputCmdCollection.NoInputCommands;
+import server.object.LabWork;
+import server.parser.Root;
+import server.parser.parserFromJson.ParserFromJson;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -43,19 +42,19 @@ public class Controller {
     private Map<String, Invoker> inputCommands = new HashMap<>(); // Map для команд С входными данными, не может быть null
     private HashSet<LabWork> labWorks = new HashSet<>(); // Коллекция объектов, не может быть null
     private ParserFromJson parserFromJson = new ParserFromJson(); // Парсинг в коллекцию. Не может быть null
-    private GetHelpCommand help = new GetHelpCommand(new HelperController()); // Не может быть null
+    private GetHelpCommand help = new GetHelpCommand(new server.manager.HelperController()); // Не может быть null
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));  // Не может быть null
-    private HelperController helperController; // Не может быть null
+    private server.manager.HelperController helperController; // Не может быть null
     private Root root; // Не может быть null
     private ExecuteScript executeScript; // Не может быть null
 
-    final String url = "jdbc:postgresql://pg:5432/postgres";
-    final String user = "s367870";
-    final String password = "JP4fMgKAQj8GcAMM";
+    final String url = "jdbc:postgresql://pg:5432/studs";
+    final String user = "s367069";
+    final String password = "hB0KuLO460j8BNl8";
 
-    private Server server = new Server();
+    private server.manager.Server server = new server.manager.Server();
 
-    ConnectionManager connectionManager = new ConnectionManager(url, user, password);
+    ConnectionManager connectionManager = new ConnectionManager(url,user,password);
 
     LabWorksDatabaseManager labWorksDatabaseManager = new LabWorksDatabaseManager(connectionManager);
 
@@ -77,36 +76,23 @@ public class Controller {
             root.setValid(true);
         }
 
-        this.helperController = new HelperController(this.file, getRoot(), getServer());
+        this.helperController = new server.manager.HelperController(this.file, getRoot(), getServer());
     }
 
-    private static String getRandomString() {
-        int l = 6;
-        String AlphaNumericStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789";
-        StringBuilder s = new StringBuilder(l);
-        int i;
-        for (i = 0; i < l; i++) {
-            int ch = (int) (AlphaNumericStr.length() * Math.random());
-            s.append(AlphaNumericStr.charAt(ch));
-        }
-        return s.toString();
-    }
-
-    private void authorize() throws NoSuchAlgorithmException, IOException, SQLException {
-        BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
-        MessageDigest md = MessageDigest.getInstance("MD2");
-        System.out.println("Введите имя пользователя");
-        String user = b.readLine().trim();
-        System.out.println("Введите пароль");
-        String password = b.readLine().trim();
-        String salt = getRandomString();
-        String pepper = "#63Rq*9Oxx!";
-
-        byte[] hash = md.digest((pepper + password + salt).getBytes("UTF-8"));
-
-        Login login = new Login(connectionManager);
-        login.checkOnAuth(user, salt, hash);
-    }
+//    private void authorize() throws NoSuchAlgorithmException, IOException, SQLException {
+//        BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+//        System.out.println("Введите имя пользователя");
+//        String user = b.readLine().trim();
+//        System.out.println("Введите пароль");
+//        String password = b.readLine().trim();
+//
+//
+//        Login login = new Login(connectionManager);
+//        boolean log = login.saveUser(user,password);
+//        if (!log) authorize();
+//        CurrentUser now = new CurrentUser(login.getUserID());
+//        helperController.setCurrentUser(now);
+//    }
 
     /**
      * Самый главный метод класса, а может и всей программы.
@@ -116,7 +102,68 @@ public class Controller {
      *
      * @throws IOException
      */
-    public void start() throws IOException, ParseException, ClassNotFoundException, SQLException {
+//    public void start() throws IOException, ParseException, ClassNotFoundException, SQLException {
+//        if (getRoot().getValid()) {
+//            setExecuteScript(new ExecuteScript(getHelperController()));
+//            try {
+//                Connection conn = connectionManager.getConnection();
+//                if (connectionManager.isConnected()){
+//                    System.out.println("База данных подключена");
+//                }
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Thread haltedHook = new Thread(() -> {
+//                try {
+//                    getHelperController().save();
+//                    connectionManager.getConnection().close();
+//                } catch (IOException | SQLException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            });
+//            Runtime.getRuntime().addShutdownHook(haltedHook);
+//            boolean flag = false;
+//
+//
+//            helperController.setDbManager(labWorksDatabaseManager);
+//
+//            while (!flag) {
+//                System.out.println("The SERVER is RUNNING:");
+//                String cmd = reformatCmd(getServer().dataFromClient());
+//                Runnable r = () -> {
+//                    try {
+//                        String[] arr = cmd.split(" ", 2);
+//                        if (arr[0].equals("execute_script")) {
+//                            getExecuteScript().execute(arr[1]);
+//                        } else if (arr[0].equals("Exit")) {
+//                            // close socket connection
+//                            getHelperController().save();
+//                            getServer().sentToClient("Работа сервера остановлена.");
+//                            getServer().getServerSocket().close();
+//                            System.exit(0);
+//                        } else if(arr[0].equals("Auth")) {
+//                            int user_id = Integer.parseInt(arr[1]);
+//                            CurrentUser currentUser = new CurrentUser(user_id);
+//                            getHelperController().setCurrentUser(currentUser);
+//                            getHelperController().userOnBase();
+//                        } else {
+//                            searchCommandInCollection(cmd);
+//                        }
+//                    } catch (IOException | ParseException e) {
+//                        throw new RuntimeException();
+//                    }
+//                };
+//
+//                Thread thread = new Thread(r);
+//                thread.start();
+//
+//                connectionManager.getConnection().close();
+//               // getServer().sentToClient("? Если возникли трудности, введите команду help");
+//            }
+//        }
+//    }
+
+    public void start() throws IOException, SQLException {
         if (getRoot().getValid()) {
             setExecuteScript(new ExecuteScript(getHelperController()));
             try {
@@ -140,11 +187,6 @@ public class Controller {
 
 
             helperController.setDbManager(labWorksDatabaseManager);
-            try {
-                authorize();
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
 
 
             final int numberOfProcessors = Runtime.getRuntime().availableProcessors();
@@ -186,6 +228,11 @@ public class Controller {
 
                     Thread thread = new Thread(r);
                     thread.start();
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        System.out.println("Поток прерван.");
+                    }
                 }
             }
 
@@ -222,6 +269,7 @@ public class Controller {
         setInputCommands(inputCommands.getInputCommands());
 
         boolean flag = true;
+
         //  No input commands
         for (Map.Entry<String, Invoker> entry : getCommands().entrySet()) {
             String key = entry.getKey();
@@ -252,7 +300,7 @@ public class Controller {
                 flag = false;
             }
         }
-        if (flag == true) {
+        if (flag == true){
             getServer().sentToClient("Невалидный ввод данных, повторите попытку.");
         }
     }
@@ -342,7 +390,7 @@ public class Controller {
         this.executeScript = executeScript;
     }
 
-    public Server getServer() {
+    public server.manager.Server getServer() {
         return server;
     }
 
