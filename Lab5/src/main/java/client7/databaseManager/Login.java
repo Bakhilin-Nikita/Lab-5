@@ -16,11 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Login {
-    private final ConnectionManager connectionManager;
+    private final client.databaseManager.ConnectionManager connectionManager;
     public int userID;
 
-    public Login (String url, String login, String password) {
-        connectionManager = new ConnectionManager(url, login, password);
+    private String salty;
+
+    public Login(String url, String login, String password) {
+        connectionManager = new client.databaseManager.ConnectionManager(url, login, password);
     }
 
     public Login(ConnectionManager connectionManager) {
@@ -43,7 +45,8 @@ public class Login {
         boolean auth = false;
         Map<String,String> users = loadUsers();
         if (users.isEmpty()||!(users.containsKey(username))) {
-            String hash = hashPassword(password);
+            String salt = getRandomString();
+            String hash = hashPassword(password,salt);
             users.put(username,hash);
             setUserID(auth(username,hash));
             System.out.println("Авторизация нового пользователя прошла успешно!");
@@ -54,7 +57,8 @@ public class Login {
                 String value = entry.getValue();
 
                 if (key.equals(username)){
-                    if (value.equals(hashPassword(password))){
+                    String s = findSalt(username);
+                    if (value.equals(hashPassword(password,s))){
                         setUserID(findUserID(username));
                         System.out.println("Аутентификация пользователя прошла успешно");
                         auth = true;
@@ -71,9 +75,10 @@ public class Login {
 
     public int auth(String username, String password) throws IOException, SQLException {
         Connection conn = getConnection();
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(username,password) VALUES(?,?) returning id");
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(username,password,salt) VALUES(?,?,?) returning id");
         ps.setString(1, username);
         ps.setString(2, password);
+        ps.setString(3,salty);
 
         ResultSet rs = ps.executeQuery();
         conn.close();
@@ -94,6 +99,18 @@ public class Login {
         return rs.getInt(1);
     }
 
+    private String findSalt(String username) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement ps = conn.prepareStatement("SELECT salt FROM users WHERE username = ?");
+        ps.setString(1,username);
+
+        ResultSet rs = ps.executeQuery();
+        conn.close();
+        rs.next();
+
+        return rs.getString(1);
+    }
+
     private static String getRandomString() {
         int l = 6;
         String AlphaNumericStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789";
@@ -106,13 +123,17 @@ public class Login {
         return s.toString();
     }
 
-    private String hashPassword(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    private void borrowSalt(String salt){
+        this.salty = salt;
+    }
+
+    private String hashPassword(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest md = MessageDigest.getInstance("MD2");
-        //String salt = getRandomString();
+        borrowSalt(salt);
         String pepper = "#63Rq*9Oxx!";
 
-        //byte[] hash = md.digest((pepper+password).getBytes("UTF-8"));
-        String hash = pepper+password.hashCode();
+        // byte[] hash = md.digest((salt+pepper+password).getBytes("UTF-8"));
+        String hash = String.valueOf((salt+pepper+password).hashCode());
         return hash;
     }
 
