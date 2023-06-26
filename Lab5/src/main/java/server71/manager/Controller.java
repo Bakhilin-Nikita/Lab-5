@@ -163,12 +163,12 @@ public class Controller {
 //        }
 //    }
 
-    public void start() throws IOException, SQLException {
+    public void start() throws IOException, ParseException, ClassNotFoundException, SQLException {
         if (getRoot().getValid()) {
             setExecuteScript(new ExecuteScript(getHelperController()));
             try {
                 Connection conn = connectionManager.getConnection();
-                if (connectionManager.isConnected()) {
+                if (connectionManager.isConnected()){
                     System.out.println("База данных подключена");
                 }
             } catch (SQLException e) {
@@ -188,66 +188,39 @@ public class Controller {
 
             helperController.setDbManager(labWorksDatabaseManager);
 
-
-            final int numberOfProcessors = Runtime.getRuntime().availableProcessors();
-            ForkJoinPool forkJoinPool = new ForkJoinPool(numberOfProcessors);
-
-
-            class ExecuteRequest extends RecursiveAction {
-                private String cmd;
-
-                ExecuteRequest(String command) {
-                    this.cmd = command;
-                }
-
-                @Override
-                protected void compute() {
-                    Runnable r = () -> {
-                        try {
-                            String[] arr = cmd.split(" ", 2);
-                            if (arr[0].equals("execute_script")) {
-                                getExecuteScript().execute(arr[1]);
-                            } else if (arr[0].equals("Exit")) {
-                                // close socket connection
-                                getHelperController().save();
-                                getServer().sentToClient("Работа сервера остановлена.");
-                                getServer().getServerSocket().close();
-                                System.exit(0);
-                            } else if(arr[0].equals("Auth")) {
-                                int user_id = Integer.parseInt(arr[1]);
-                                CurrentUser currentUser = new CurrentUser(user_id);
-                                getHelperController().setCurrentUser(currentUser);
-                                getHelperController().userOnBase();
-                            } else {
-                                searchCommandInCollection(cmd);
-                            }
-                        } catch (IOException | ParseException e) {
-                            throw new RuntimeException();
-                        }
-                    };
-
-                    Thread thread = new Thread(r);
-                    thread.start();
-                    try {
-                        thread.join();
-                    } catch (InterruptedException e) {
-                        System.out.println("Поток прерван.");
-                    }
-                }
-            }
-
             while (!flag) {
                 System.out.println("The SERVER is RUNNING:");
                 String cmd = reformatCmd(getServer().dataFromClient());
+                Runnable r = () -> {
+                    try {
+                        String[] arr = cmd.split(" ", 2);
+                        if (arr[0].equals("execute_script")) {
+                            getExecuteScript().execute(arr[1]);
+                        } else if (arr[0].equals("Exit")) {
+                            // close socket connection
+                            getHelperController().save();
+                            getServer().sentToClient("Работа сервера остановлена.");
+                            getServer().getServerSocket().close();
+                            System.exit(0);
+                        } else if(arr[0].equals("Auth")) {
+                            int user_id = Integer.parseInt(arr[1]);
+                            CurrentUser currentUser = new CurrentUser(user_id);
+                            getHelperController().setCurrentUser(currentUser);
+                            getHelperController().userOnBase();
+                        } else {
+                            searchCommandInCollection(cmd);
+                        }
+                    } catch (IOException | ParseException e) {
+                        throw new RuntimeException();
+                    }
+                };
 
-                ExecuteRequest executeRequest = new ExecuteRequest(cmd);
-                forkJoinPool.execute(executeRequest);
+                Thread thread = new Thread(r);
+                thread.start();
 
+                connectionManager.getConnection().close();
+                // getServer().sentToClient("? Если возникли трудности, введите команду help");
             }
-
-
-            connectionManager.getConnection().close();
-            // getServer().sentToClient("? Если возникли трудности, введите команду help");
         }
     }
 
